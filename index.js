@@ -6,12 +6,12 @@ const path = require("path");
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the "Home" folder
-app.use(express.static(path.join(__dirname, "Home")));
+// Serve static files from the "frontend-test" folder
+app.use(express.static(path.join(__dirname, "frontend-test")));
 
 // Optional: serve hello.html on root explicitly
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "Home", "hello.html"));
+  res.sendFile(path.join(__dirname, "frontend-test", "hello.html"));
 });
 
 // Test API endpoint
