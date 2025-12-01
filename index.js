@@ -1,20 +1,23 @@
 const express = require("express");
 const app = express();
+const path = require("path");
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-     app.use(express.static("Home"));
+// Serve static files from the "Home" folder
+app.use(express.static(path.join(__dirname, "Home")));
 
+// Optional: serve index.html on root explicitly
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "Home", "index.html"));
 });
 
+// Test API endpoint
 app.get("/api/test", (req, res) => {
     res.json({ message: "Hello from Render backend!" });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
-
+// OpenAI chat endpoint
 const OpenAI = require("openai");
 const client = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 
@@ -28,3 +31,7 @@ app.post("/api/chat", async (req, res) => {
 
   res.json({ reply: response.choices[0].message.content });
 });
+
+// Use Render's port or 3000 locally
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
