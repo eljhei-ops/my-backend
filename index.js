@@ -7,9 +7,9 @@ app.use(express.json());
 // Serve static files from the "Home" folder
 app.use(express.static(path.join(__dirname, "Home")));
 
-// Optional: serve index.html on root explicitly
+// Optional: serve hello.html on root explicitly
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "Home", "index.html"));
+  res.sendFile(path.join(__dirname, "Home", "hello.html"));
 });
 
 // Test API endpoint
