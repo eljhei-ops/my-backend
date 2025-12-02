@@ -1,37 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>View Users</title>
-<link rel="stylesheet" href="admin.css">
-<script src="admin.js"></script>
+    <title>View Users</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js"></script>
 </head>
+
 <body onload="requireAdmin(); loadUsers()">
 
-<div class="sidebar">
-    <a href="dashboard.html">🏠 Dashboard</a>
-    <a href="add_user.html">➕ Add User</a>
-    <a href="view_users.html">📋 View Users</a>
-    <a href="#" onclick="logout()">🚪 Logout</a>
-</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2 class="logo-text">IT Dashboard</h2>
+        <a href="it-dashboard.html">🏠 Dashboard</a>
+        <a href="add_user.html">➕ Add User</a>
+        <a class="active" href="view_users.html">📋 View Users</a>
+        <a href="#" onclick="logout()">🚪 Logout</a>
+    </aside>
 
-<div class="main">
-    <div class="card">
-        <h2>All Users</h2>
+    <!-- MAIN PANEL -->
+    <div class="main">
 
-        <table width="100%" border="1" cellpadding="6" style="border-collapse: collapse;">
-            <thead>
-                <tr style="background:#e1e1e1;">
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Type</th>
-                    <th>Date Created</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="userTable"></tbody>
-        </table>
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <h1>User Management</h1>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <div class="card">
+                <h2>All Users</h2>
+                <p class="subtitle">Manage and update user accounts.</p>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Type</th>
+                                <th>Date Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTable"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
     </div>
-</div>
+
 
 <script>
 function loadUsers() {
@@ -49,8 +70,8 @@ function loadUsers() {
                 <td>${user.user_type}</td>
                 <td>${user.date_created}</td>
                 <td>
-                    <button onclick="editUser(${user.id})">Edit</button>
-                    <button onclick="deleteUser(${user.id})" style="background:red;">Delete</button>
+                    <button class="btn-edit" onclick="editUser(${user.id})">Edit</button>
+                    <button class="btn-delete" onclick="deleteUser(${user.id})">Delete</button>
                 </td>
             </tr>`;
         });

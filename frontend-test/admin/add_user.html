@@ -1,66 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Add User</title>
-<link rel="stylesheet" href="admin.css">
-<script src="admin.js"></script>
+    <title>Add User</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js"></script>
 </head>
+
 <body onload="requireAdmin()">
 
-<div class="sidebar">
-    <a href="dashboard.html">🏠 Dashboard</a>
-    <a href="add_user.html">➕ Add User</a>
-    <a href="view_users.html">📋 View Users</a>
-    <a href="#" onclick="logout()">🚪 Logout</a>
-</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2 class="logo-text">IT Dashboard</h2>
+        <a href="it-dashboard.html">🏠 Dashboard</a>
+        <a class="active" href="add_user.html">➕ Add User</a>
+        <a href="view_users.html">📋 View Users</a>
+        <a href="#" onclick="logout()">🚪 Logout</a>
+    </aside>
 
-<div class="main">
-    <div class="card">
-        <h2>Add New User</h2>
+    <!-- MAIN PANEL -->
+    <div class="main">
 
-        <label>Username</label>
-        <input type="text" id="username">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <h1>Add User</h1>
+        </header>
 
-        <label>Password</label>
-        <input type="password" id="password">
+        <!-- PAGE CONTENT -->
+        <section class="content">
 
-        <label>User Type</label>
-        <select id="usertype">
-            <option value="CLIENT">Client</option>
-            <option value="ADMIN">Admin</option>
-            <option value="IT">IT</option>
-        </select>
+            <div class="card form-card">
 
-        <button onclick="addUser()">Create User</button>
+                <h2>Create New User</h2>
+                <p class="subtitle">Fill in the details below to register a new account.</p>
 
-        <p id="msg"></p>
+                <div class="form-grid">
+
+                    <div>
+                        <label>Username</label>
+                        <input type="text" id="username">
+                    </div>
+
+                    <div>
+                        <label>Password</label>
+                        <input type="password" id="password">
+                    </div>
+
+                    <div>
+                        <label>User Type</label>
+                        <select id="usertype">
+                            <option value="CLIENT">Client</option>
+                            <option value="ADMIN">Admin</option>
+                            <option value="IT">IT</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button class="primary-btn" onclick="addUser()">Create User</button>
+
+                <p id="msg" class="msg"></p>
+
+            </div>
+        </section>
+
     </div>
-</div>
 
-<script>
-function addUser() {
-    const username = username.value.trim();
-    const password = password.value.trim();
-    const usertype = usertype.value;
+    <script>
+        function addUser() {
+            const usernameVal = username.value.trim();
+            const passwordVal = password.value.trim();
+            const usertypeVal = usertype.value;
 
-    if (!username || !password) {
-        msg.textContent = "Fill all fields!";
-        msg.style.color = "red";
-        return;
-    }
+            if (!usernameVal || !passwordVal) {
+                msg.textContent = "Fill all fields!";
+                msg.style.color = "red";
+                return;
+            }
 
-    fetch("/api/register", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ username, password, usertype })
-    })
-    .then(r => r.json())
-    .then(data => {
-        msg.textContent = data.message;
-        msg.style.color = data.success ? "green" : "red";
-    });
-}
-</script>
+            fetch("/api/register", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    username: usernameVal,
+                    password: passwordVal,
+                    usertype: usertypeVal
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                msg.textContent = data.message;
+                msg.style.color = data.success ? "green" : "red";
+            });
+        }
+    </script>
 
 </body>
 </html>

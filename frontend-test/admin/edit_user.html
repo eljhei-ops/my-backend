@@ -1,67 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Edit User</title>
-<link rel="stylesheet" href="admin.css">
-<script src="admin.js"></script>
+    <title>Edit User</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js"></script>
 </head>
+
 <body onload="requireAdmin(); loadUser()">
 
-<div class="sidebar">
-    <a href="dashboard.html">🏠 Dashboard</a>
-    <a href="add_user.html">➕ Add User</a>
-    <a href="view_users.html">📋 View Users</a>
-    <a href="#" onclick="logout()">🚪 Logout</a>
-</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2 class="logo-text">IT Dashboard</h2>
+        <a href="it-dashboard.html">🏠 Dashboard</a>
+        <a href="add_user.html">➕ Add User</a>
+        <a href="view_users.html">📋 View Users</a>
+        <a class="active" href="edit_user.html">✏️ Edit User</a>
+        <a href="#" onclick="logout()">🚪 Logout</a>
+    </aside>
 
-<div class="main">
-    <div class="card">
-        <h2>Edit User</h2>
+    <!-- MAIN PANEL -->
+    <div class="main">
 
-        <label>Username</label>
-        <input type="text" id="username">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <h1>Edit User</h1>
+        </header>
 
-        <label>User Type</label>
-        <select id="usertype">
-            <option value="CLIENT">CLIENT</option>
-            <option value="ADMIN">ADMIN</option>
-            <option value="IT">IT</option>
-        </select>
+        <!-- CONTENT -->
+        <section class="content">
 
-        <button onclick="saveUser()">Save Changes</button>
+            <div class="card form-card">
 
-        <p id="msg"></p>
+                <h2>User Information</h2>
+                <p class="subtitle">Update the user details below.</p>
+
+                <div class="form-grid">
+
+                    <div>
+                        <label>Username</label>
+                        <input type="text" id="username">
+                    </div>
+
+                    <div>
+                        <label>User Type</label>
+                        <select id="usertype">
+                            <option value="CLIENT">Client</option>
+                            <option value="ADMIN">Admin</option>
+                            <option value="IT">IT</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button class="primary-btn" onclick="saveUser()">Save Changes</button>
+
+                <p class="msg" id="msg"></p>
+
+            </div>
+
+        </section>
+
     </div>
-</div>
 
-<script>
-const id = new URLSearchParams(window.location.search).get("id");
+    <script>
+        const id = new URLSearchParams(window.location.search).get("id");
 
-function loadUser() {
-    fetch("/api/user/" + id)
-    .then(r => r.json())
-    .then(user => {
-        username.value = user.user_name;
-        usertype.value = user.user_type;
-    });
-}
+        function loadUser() {
+            fetch("/api/user/" + id)
+            .then(r => r.json())
+            .then(user => {
+                username.value = user.user_name;
+                usertype.value = user.user_type;
+            });
+        }
 
-function saveUser() {
-    fetch("/api/update-user/" + id, {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            username: username.value,
-            usertype: usertype.value
-        })
-    })
-    .then(r => r.json())
-    .then(data => {
-        msg.textContent = data.message;
-        msg.style.color = data.success ? "green" : "red";
-    });
-}
-</script>
+        function saveUser() {
+            fetch("/api/update-user/" + id, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    username: username.value,
+                    usertype: usertype.value
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                msg.textContent = data.message;
+                msg.style.color = data.success ? "green" : "red";
+            });
+        }
+    </script>
 
 </body>
 </html>

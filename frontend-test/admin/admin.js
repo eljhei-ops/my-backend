@@ -1,38 +1,81 @@
 const BACKEND = "https://my-backend-asx6.onrender.com";
 
-// Allow only IT user_type
+/* ================================
+   1. AUTH PROTECTION (IT ONLY)
+================================ */
 function requireIT() {
     const token = localStorage.getItem("token");
     const type = localStorage.getItem("user_type");
+    const username = localStorage.getItem("username");
 
     if (!token || type !== "IT") {
-        alert("Unauthorized access. IT only.");
+        alert("Unauthorized access. IT users only.");
         window.location.href = "/front-test/login.html";
         return;
     }
 
-    document.getElementById("currentUser").innerText =
-        "Logged in as: " + localStorage.getItem("username");
+    // If page has a user display
+    const label = document.getElementById("currentUser");
+    if (label) {
+        label.innerText = "Logged in as: " + username;
+    }
 }
 
-// Logout
+/* ================================
+   2. LOGOUT
+================================ */
 function logout() {
     localStorage.clear();
     window.location.href = "/front-test/login.html";
 }
 
-// Fetch dashboard stats
-async function loadStats() {
-    const res = await fetch(`${BACKEND}/api/admin/stats`);
-    const data = await res.json();
+/* ================================
+   3. AUTH FETCH HELPER
+================================ */
+async function api(url, options = {}) {
+    const token = localStorage.getItem("token");
 
-    document.getElementById("countUsers").innerText = data.total_users;
-    document.getElementById("countIT").innerText = data.total_it;
-    document.getElementById("countAdmin").innerText = data.total_admin;
-    document.getElementById("countClient").innerText = data.total_client;
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    };
+
+    const res = await fetch(url, { ...options, headers });
+    return res.json();
 }
 
+/* ================================
+   4. LOAD IT DASHBOARD STATS
+================================ */
+async function loadStats() {
+    try {
+        const data = await api(`${BACKEND}/api/admin/stats`);
+
+        if (document.getElementById("countUsers"))
+            document.getElementById("countUsers").innerText = data.total_users;
+
+        if (document.getElementById("countIT"))
+            document.getElementById("countIT").innerText = data.total_it;
+
+        if (document.getElementById("countAdmin"))
+            document.getElementById("countAdmin").innerText = data.total_admin;
+
+        if (document.getElementById("countClient"))
+            document.getElementById("countClient").innerText = data.total_client;
+
+    } catch (err) {
+        console.error("Stats load failed:", err);
+    }
+}
+
+/* ================================
+   5. AUTO-INITIALIZER
+================================ */
 window.onload = () => {
     requireIT();
-    loadStats();
+
+    // Load stats only if dashboard elements exist
+    if (document.getElementById("countUsers")) {
+        loadStats();
+    }
 };
