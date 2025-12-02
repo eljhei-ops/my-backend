@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IT Dashboard</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background: #007bff;
+        padding: 15px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .container {
+        padding: 25px;
+    }
+
+    h2 {
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ccc;
+        text-align: left;
+    }
+
+    th {
+        background: #007bff;
+        color: white;
+    }
+
+    button {
+        padding: 10px 15px;
+        margin-top: 15px;
+        cursor: pointer;
+        background: #007bff;
+        border: none;
+        color: white;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background: #005bbf;
+    }
+
+</style>
+</head>
+<body>
+
+<header>
+    <h2>IT Dashboard</h2>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+    <h3>Welcome, IT User</h3>
+
+    <h3>List of Users</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Type</th>
+                <th>Date Created</th>
+            </tr>
+        </thead>
+        <tbody id="userTable"></tbody>
+    </table>
+</div>
+
+<script>
+const BACKEND_URL = "https://my-backend-asx6.onrender.com";
+
+// ========== PROTECT PAGE ==========
+
+const token = localStorage.getItem("token");
+const user_type = localStorage.getItem("user_type");
+
+// Only IT is allowed
+if (!token || user_type !== "IT") {
+    alert("Access restricted to IT users only.");
+    window.location.href = "/login.html";
+}
+
+// ========== LOAD USERS ==========
+
+async function loadUsers() {
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/admin/users`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+            alert("Failed to load users.");
+            return;
+        }
+
+        let rows = "";
+        data.users.forEach(u => {
+            rows += `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.user_name}</td>
+                    <td>${u.user_type}</td>
+                    <td>${u.date_created}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById("userTable").innerHTML = rows;
+
+    } catch (err) {
+        alert("Error loading users.");
+    }
+}
+
+loadUsers();
+
+// ========== LOGOUT ==========
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "/login.html";
+}
+</script>
+
+</body>
+</html>

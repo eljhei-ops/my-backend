@@ -88,6 +88,12 @@
 </div>
 
 <script>
+
+// Auto-detect backend whether local or render:
+const BACKEND = window.location.hostname.includes("localhost")
+    ? "http://localhost:3000"
+    : "https://my-backend-asx6.onrender.com";
+
 function login() {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -102,13 +108,14 @@ function login() {
         return;
     }
 
-    fetch("/api/login", {
+    fetch(`${BACKEND}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
     })
     .then(res => res.json())
     .then(data => {
+
         if (!data.success) {
             resultBox.textContent = data.message;
             resultBox.classList.add("error");
@@ -124,12 +131,15 @@ function login() {
 
         setTimeout(() => {
             if (data.user_type === "IT") {
-                window.location.href = "/admin-dashboard";
+                window.location.href = "/it-dashboard.html";
+            } else if (data.user_type === "Admin") {
+                window.location.href = "/admin-dashboard.html"; 
             } else {
-                alert("You are logged in, but not authorized to access the Admin Dashboard.");
-                window.location.href = "/home.html"; // replace with your homepage
+                alert("You are logged in, but do not have dashboard access.");
+                window.location.href = "/home.html";
             }
         }, 500);
+
     })
     .catch(err => {
         resultBox.textContent = "Server error.";
