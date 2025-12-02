@@ -4,6 +4,60 @@
     <title>View Users</title>
     <link rel="stylesheet" href="admin.css">
     <script src="admin.js"></script>
+
+    <style>
+        /* Improve table spacing */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .table th, .table td {
+            padding: 12px 14px;
+            text-align: left;
+        }
+
+        /* Modal styling */
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-box {
+            background: white;
+            width: 350px;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .modal-box input, .modal-box select {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .modal-box button {
+            padding: 10px 16px;
+            margin-right: 8px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+        }
+        .save-btn {
+            background: #2d6cdf;
+            color: white;
+        }
+        .cancel-btn {
+            background: #aaa;
+            color: white;
+        }
+    </style>
 </head>
 
 <body onload="requireAdmin(); loadUsers()">
@@ -20,12 +74,10 @@
     <!-- MAIN PANEL -->
     <div class="main">
 
-        <!-- TOPBAR -->
         <header class="topbar">
             <h1>User Management</h1>
         </header>
 
-        <!-- CONTENT -->
         <section class="content">
 
             <div class="card">
@@ -53,6 +105,30 @@
 
     </div>
 
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-box">
+        <h3>Edit User</h3>
+
+        <label>Username</label>
+        <input id="edit_username" type="text">
+
+        <label>User Type</label>
+        <select id="edit_usertype">
+            <option value="IT">IT</option>
+            <option value="Admin">Admin</option>
+            <option value="Client">Client</option>
+        </select>
+
+        <label>New Password (optional)</label>
+        <input id="edit_password" type="password" placeholder="Leave blank to keep existing">
+
+        <p id="edit_msg"></p>
+
+        <button class="save-btn" onclick="saveEdit()">Save</button>
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
 
 <script>
 function loadUsers() {
@@ -62,29 +138,25 @@ function loadUsers() {
         const table = document.getElementById("userTable");
         table.innerHTML = "";
 
-        if (!data.success || !data.users) {
-            table.innerHTML = "<tr><td colspan='5'>No users found.</td></tr>";
+        if (!data.success) {
+            table.innerHTML = "<tr><td colspan='5'>Failed to load users.</td></tr>";
             return;
         }
 
         data.users.forEach(user => {
             table.innerHTML += `
-            <tr>
-                <td>${user.id}</td>
-                <td>${user.user_name}</td>
-                <td>${user.user_type}</td>
-                <td>${new Date(user.date_created).toLocaleString()}</td>
-                <td>
-                    <button class="btn-edit" onclick="editUser(${user.id})">Edit</button>
-                    <button class="btn-delete" onclick="deleteUser(${user.id})">Delete</button>
-                </td>
-            </tr>`;
+<tr>
+    <td>${user.id}</td>
+    <td>${user.user_name}</td>
+    <td>${user.user_type}</td>
+    <td>${new Date(user.date_created).toLocaleString()}</td>
+    <td>
+        <button onclick="openEdit(${user.id}, '${user.user_name}', '${user.user_type}')">Edit</button>
+        <button onclick="deleteUser(${user.id})">Delete</button>
+    </td>
+</tr>`;
         });
     });
-}
-
-function editUser(id) {
-    window.location.href = "edit_user.html?id=" + id;
 }
 
 function deleteUser(id) {
@@ -99,15 +171,63 @@ function deleteUser(id) {
 }
 
 function requireAdmin() {
-    const type = localStorage.getItem("user_type");
-    if (type !== "IT") {
+    if (localStorage.getItem("user_type") !== "IT") {
         alert("Unauthorized");
         window.location.href = "login.html";
     }
 }
 
-</script>
+let editUserId = null;
 
+function openEdit(id, name, type) {
+    editUserId = id;
+
+    document.getElementById("edit_username").value = name;
+    document.getElementById("edit_usertype").value = type;
+    document.getElementById("edit_password").value = "";
+    document.getElementById("edit_msg").innerText = "";
+
+    document.getElementById("editModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+
+async function saveEdit() {
+    const username = document.getElementById("edit_username").value;
+    const usertype = document.getElementById("edit_usertype").value;
+    const password = document.getElementById("edit_password").value;
+
+    const payload = {
+        user_name: username,
+        user_type: usertype
+    };
+
+    if (password.trim() !== "") {
+        payload.pass_word = password.trim();
+    }
+
+    const res = await fetch(`${BACKEND}/api/admin/users/${editUserId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    const msg = document.getElementById("edit_msg");
+    msg.textContent = data.message;
+    msg.style.color = data.success ? "green" : "red";
+
+    if (data.success) {
+        setTimeout(() => {
+            closeModal();
+            loadUsers();
+        }, 600);
+    }
+}
+</script>
 
 </body>
 </html>
