@@ -26,7 +26,7 @@ function requireIT() {
 ================================ */
 function logout() {
     localStorage.clear();
-    window.location.href = "/front-test/login.html";
+    window.location.href = "/frontend-test/login.html";
 }
 
 /* ================================
