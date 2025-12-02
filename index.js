@@ -16,9 +16,12 @@ app.use(cors());
 // Serve static frontend folder
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-app.get(/.*/, (req, res) => {
+// Serve login.html only for unknown NON-API routes
+app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api/")) return next();
     res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
 });
+
 
 
 // Test API endpoint
