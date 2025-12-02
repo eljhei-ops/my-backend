@@ -237,17 +237,6 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.get("/G9xP2qLmA7Vb4TzR8cWnJ5sKhEuD0", async (req, res) => {
-  const result = await db.query("SELECT COUNT(*) FROM users");
-  const count = Number(result.rows[0].count);
-
-  if (count === 0) {
-    res.sendFile(path.join(__dirname, "frontend-test/admin", "add_user.html"));
-  } else {
-    res.send("Setup already complete.");
-  }
-});
-
 
 // DB TEST
 app.get("/api/db-test", async (req, res) => {
