@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add User</title>
+<link rel="stylesheet" href="admin.css">
+<script src="admin.js"></script>
+</head>
+<body onload="requireAdmin()">
+
+<div class="sidebar">
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="add_user.html">➕ Add User</a>
+    <a href="view_users.html">📋 View Users</a>
+    <a href="#" onclick="logout()">🚪 Logout</a>
+</div>
+
+<div class="main">
+    <div class="card">
+        <h2>Add New User</h2>
+
+        <label>Username</label>
+        <input type="text" id="username">
+
+        <label>Password</label>
+        <input type="password" id="password">
+
+        <label>User Type</label>
+        <select id="usertype">
+            <option value="CLIENT">CLIENT</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="IT">IT</option>
+        </select>
+
+        <button onclick="addUser()">Create User</button>
+
+        <p id="msg"></p>
+    </div>
+</div>
+
+<script>
+function addUser() {
+    const username = username.value.trim();
+    const password = password.value.trim();
+    const usertype = usertype.value;
+
+    if (!username || !password) {
+        msg.textContent = "Fill all fields!";
+        msg.style.color = "red";
+        return;
+    }
+
+    fetch("/api/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ username, password, usertype })
+    })
+    .then(r => r.json())
+    .then(data => {
+        msg.textContent = data.message;
+        msg.style.color = data.success ? "green" : "red";
+    });
+}
+</script>
+
+</body>
+</html>

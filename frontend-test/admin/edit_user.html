@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit User</title>
+<link rel="stylesheet" href="admin.css">
+<script src="admin.js"></script>
+</head>
+<body onload="requireAdmin(); loadUser()">
+
+<div class="sidebar">
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="add_user.html">➕ Add User</a>
+    <a href="view_users.html">📋 View Users</a>
+    <a href="#" onclick="logout()">🚪 Logout</a>
+</div>
+
+<div class="main">
+    <div class="card">
+        <h2>Edit User</h2>
+
+        <label>Username</label>
+        <input type="text" id="username">
+
+        <label>User Type</label>
+        <select id="usertype">
+            <option value="CLIENT">CLIENT</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="IT">IT</option>
+        </select>
+
+        <button onclick="saveUser()">Save Changes</button>
+
+        <p id="msg"></p>
+    </div>
+</div>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+
+function loadUser() {
+    fetch("/api/user/" + id)
+    .then(r => r.json())
+    .then(user => {
+        username.value = user.user_name;
+        usertype.value = user.user_type;
+    });
+}
+
+function saveUser() {
+    fetch("/api/update-user/" + id, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            username: username.value,
+            usertype: usertype.value
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        msg.textContent = data.message;
+        msg.style.color = data.success ? "green" : "red";
+    });
+}
+</script>
+
+</body>
+</html>

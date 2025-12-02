@@ -5,6 +5,7 @@ const path = require("path");
 const db = require("./db"); // db.js now uses pg
 const bcrypt = require("bcryptjs");
 const OpenAI = require("openai");
+const VALID_TYPES = ["IT", "Admin", "Client"];
 require("dotenv").config();
 
 app.use(express.json());
@@ -40,21 +41,143 @@ app.post("/api/chat", async (req, res) => {
 
 // REGISTER ENDPOINT
 app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, usertype } = req.body;
 
   if (!username || !password)
     return res.json({ success: false, message: "Missing fields." });
 
   try {
     const hash = await bcrypt.hash(password, 10);
-    const sql = "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id";
-    const result = await db.query(sql, [username, hash]);
-    res.json({ success: true, message: "User registered successfully!", userId: result.rows[0].id });
+
+    const sql = `
+      INSERT INTO users_credential (user_name, pass_word, user_type)
+      VALUES ($1, $2, $3)
+      RETURNING id
+    `;
+
+    const result = await db.query(sql, [
+      username,
+      hash,
+      usertype || "CLIENT"
+    ]);
+
+    res.json({
+      success: true,
+      message: "User registered successfully!",
+      userId: result.rows[0].id
+    });
+
   } catch (err) {
     console.error(err);
     res.json({ success: false, message: "User creation failed." });
   }
 });
+
+// ADMIN DASHBOARD
+
+// GET ALL USER
+app.get("/api/admin/users", async (req, res) => {
+  try {
+    const sql = "SELECT id, user_name, user_type, date_created FROM users ORDER BY id ASC";
+    const result = await db.query(sql);
+    res.json({ success: true, users: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: "Failed to fetch users." });
+  }
+});
+
+// ADD USER
+app.post("/api/admin/users", async (req, res) => {
+  const { user_name, pass_word, user_type } = req.body;
+
+  if (!user_name || !pass_word || !user_type)
+    return res.json({ success: false, message: "Missing fields." });
+
+  if (!VALID_TYPES.includes(user_type))
+    return res.json({ success: false, message: "Invalid user_type. Allowed: IT, Admin, Client" });
+
+  try {
+    const hash = await bcrypt.hash(pass_word, 10);
+
+    const sql = `
+      INSERT INTO users (user_name, pass_word, user_type, date_created)
+      VALUES ($1, $2, $3, NOW())
+      RETURNING id
+    `;
+
+    const result = await db.query(sql, [user_name, hash, user_type]);
+
+    res.json({
+      success: true,
+      message: "User created successfully!",
+      id: result.rows[0].id
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: "User creation failed." });
+  }
+});
+
+// UPDATE USER
+app.put("/api/admin/users/:id", async (req, res) => {
+  const { user_name, pass_word, user_type } = req.body;
+  const { id } = req.params;
+
+  if (!VALID_TYPES.includes(user_type))
+    return res.json({ success: false, message: "Invalid user_type. Allowed: IT, Admin, Client" });
+
+  try {
+    let sql = "";
+    let params = [];
+
+    if (pass_word) {
+      const hash = await bcrypt.hash(pass_word, 10);
+
+      sql = `
+        UPDATE users SET
+        user_name = $1,
+        pass_word = $2,
+        user_type = $3
+        WHERE id = $4
+      `;
+
+      params = [user_name, hash, user_type, id];
+
+    } else {
+      sql = `
+        UPDATE users SET
+        user_name = $1,
+        user_type = $2
+        WHERE id = $3
+      `;
+
+      params = [user_name, user_type, id];
+    }
+
+    await db.query(sql, params);
+    res.json({ success: true, message: "User updated successfully!" });
+
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: "Failed to update user." });
+  }
+});
+
+// DELETE USER
+app.delete("/api/admin/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query("DELETE FROM users WHERE id = $1", [id]);
+    res.json({ success: true, message: "User deleted successfully!" });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: "Failed to delete user." });
+  }
+});
+
 
 // LOGIN ENDPOINT
 app.post("/api/login", async (req, res) => {
@@ -64,7 +187,11 @@ app.post("/api/login", async (req, res) => {
     return res.json({ success: false, message: "Missing fields." });
 
   try {
-    const sql = "SELECT * FROM users WHERE username = $1";
+    const sql = `
+      SELECT * FROM users_credential 
+      WHERE user_name = $1
+    `;
+
     const result = await db.query(sql, [username]);
 
     if (result.rows.length === 0) {
@@ -72,13 +199,18 @@ app.post("/api/login", async (req, res) => {
     }
 
     const user = result.rows[0];
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, user.pass_word);
 
     if (match) {
-      return res.json({ success: true, message: "Login successful!" });
+      return res.json({
+        success: true,
+        message: "Login successful!",
+        user_type: user.user_type
+      });
     } else {
       return res.json({ success: false, message: "Wrong password." });
     }
+
   } catch (err) {
     console.error(err);
     res.json({ success: false, message: "Login failed." });

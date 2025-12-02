@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>View Users</title>
+<link rel="stylesheet" href="admin.css">
+<script src="admin.js"></script>
+</head>
+<body onload="requireAdmin(); loadUsers()">
+
+<div class="sidebar">
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="add_user.html">➕ Add User</a>
+    <a href="view_users.html">📋 View Users</a>
+    <a href="#" onclick="logout()">🚪 Logout</a>
+</div>
+
+<div class="main">
+    <div class="card">
+        <h2>All Users</h2>
+
+        <table width="100%" border="1" cellpadding="6" style="border-collapse: collapse;">
+            <thead>
+                <tr style="background:#e1e1e1;">
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Type</th>
+                    <th>Date Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTable"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function loadUsers() {
+    fetch("/api/users")
+    .then(r => r.json())
+    .then(data => {
+        const table = document.getElementById("userTable");
+        table.innerHTML = "";
+
+        data.forEach(user => {
+            table.innerHTML += `
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.user_name}</td>
+                <td>${user.user_type}</td>
+                <td>${user.date_created}</td>
+                <td>
+                    <button onclick="editUser(${user.id})">Edit</button>
+                    <button onclick="deleteUser(${user.id})" style="background:red;">Delete</button>
+                </td>
+            </tr>`;
+        });
+    });
+}
+
+function editUser(id) {
+    window.location.href = "edit_user.html?id=" + id;
+}
+
+function deleteUser(id) {
+    if (!confirm("Delete this user?")) return;
+
+    fetch("/api/delete-user/" + id, { method: "DELETE" })
+        .then(r => r.json())
+        .then(data => {
+            alert(data.message);
+            loadUsers();
+        });
+}
+</script>
+
+</body>
+</html>
