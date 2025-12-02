@@ -8,8 +8,6 @@ const OpenAI = require("openai");
 require("dotenv").config();
 const OpenAI = require("openai");
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -28,7 +26,7 @@ app.get("/api/test", (req, res) => {
 });
 
 // OpenAI chat endpoint
-const client = new OpenAI({ apiKey: process.env.OPENAI_KEY });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.post("/api/chat", async (req, res) => {
   const { message } = req.body;
