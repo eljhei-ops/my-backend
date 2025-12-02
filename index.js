@@ -96,6 +96,11 @@ app.get("/api/db-test", async (req, res) => {
   }
 });
 
+// Test DB connection on server start
+db.query("SELECT NOW() AS now")
+  .then(res => console.log("✅ Database connected! Current time:", res.rows[0].now))
+  .catch(err => console.error("❌ DB connection error:", err));
+
 // Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
