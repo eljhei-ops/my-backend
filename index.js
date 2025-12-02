@@ -17,10 +17,11 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
 // Serve login.html only for unknown NON-API routes
-app.get("*", (req, res, next) => {
+app.get("/:path(*)", (req, res, next) => {
     if (req.path.startsWith("/api/")) return next();
     res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
 });
+
 
 
 
