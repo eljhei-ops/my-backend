@@ -40,38 +40,50 @@ app.post("/api/chat", async (req, res) => {
 });
 
 // REGISTER ENDPOINT
+// REGISTER ENDPOINT
 app.post("/api/register", async (req, res) => {
   const { username, password, usertype } = req.body;
 
-  if (!username || !password)
+  if (!username || !password || !usertype) {
     return res.json({ success: false, message: "Missing fields." });
+  }
+
+  // Valid types (case-insensitive allowed from frontend)
+  const allowedTypes = ["IT", "Admin", "Client"];
+
+  // Normalize casing (Admin, Client)
+  const formattedType =
+    usertype.charAt(0).toUpperCase() + usertype.slice(1).toLowerCase();
+
+  if (!allowedTypes.includes(formattedType)) {
+    return res.json({
+      success: false,
+      message: "Invalid user type. Must be IT, Admin, or Client.",
+    });
+  }
 
   try {
     const hash = await bcrypt.hash(password, 10);
 
     const sql = `
-      INSERT INTO users_credential (user_name, pass_word, user_type)
+      INSERT INTO users (user_name, pass_word, user_type)
       VALUES ($1, $2, $3)
       RETURNING id
     `;
 
-    const result = await db.query(sql, [
-      username,
-      hash,
-      usertype || "CLIENT"
-    ]);
+    const result = await db.query(sql, [username, hash, formattedType]);
 
     res.json({
       success: true,
       message: "User registered successfully!",
-      userId: result.rows[0].id
+      userId: result.rows[0].id,
     });
-
   } catch (err) {
     console.error(err);
     res.json({ success: false, message: "User creation failed." });
   }
 });
+
 
 // ADMIN DASHBOARD
 
