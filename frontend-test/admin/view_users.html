@@ -62,13 +62,18 @@ function loadUsers() {
         const table = document.getElementById("userTable");
         table.innerHTML = "";
 
-        data.forEach(user => {
+        if (!data.success) {
+            table.innerHTML = "<tr><td colspan='5'>Failed to load users</td></tr>";
+            return;
+        }
+
+        data.users.forEach(user => {
             table.innerHTML += `
             <tr>
                 <td>${user.id}</td>
                 <td>${user.user_name}</td>
                 <td>${user.user_type}</td>
-                <td>${user.date_created}</td>
+                <td>${user.date_created || ""}</td>
                 <td>
                     <button class="btn-edit" onclick="editUser(${user.id})">Edit</button>
                     <button class="btn-delete" onclick="deleteUser(${user.id})">Delete</button>
@@ -85,7 +90,7 @@ function editUser(id) {
 function deleteUser(id) {
     if (!confirm("Delete this user?")) return;
 
-    fetch("/api/delete-user/" + id, { method: "DELETE" })
+    fetch("/api/admin/users/" + id, { method: "DELETE" })
         .then(r => r.json())
         .then(data => {
             alert(data.message);
@@ -93,6 +98,7 @@ function deleteUser(id) {
         });
 }
 </script>
+
 
 </body>
 </html>
