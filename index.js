@@ -195,6 +195,11 @@ app.delete("/api/admin/users/:id", async (req, res) => {
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
+  console.log("---- LOGIN DEBUG ----");
+  console.log("BODY:", req.body);
+  console.log("USERNAME:", username);
+  console.log("PASSWORD PROVIDED:", password);
+
   if (!username || !password)
     return res.json({ success: false, message: "Missing fields." });
 
@@ -207,6 +212,9 @@ app.post("/api/login", async (req, res) => {
     }
 
     const user = result.rows[0];
+
+    console.log("HASH IN DB:", user.pass_word);
+
     const match = await bcrypt.compare(password, user.pass_word);
 
     if (!match) {
