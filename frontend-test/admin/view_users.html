@@ -97,6 +97,15 @@ function deleteUser(id) {
             loadUsers();
         });
 }
+
+function requireAdmin() {
+    const type = localStorage.getItem("user_type");
+    if (type !== "IT") {
+        alert("Unauthorized");
+        window.location.href = "login.html";
+    }
+}
+
 </script>
 
 

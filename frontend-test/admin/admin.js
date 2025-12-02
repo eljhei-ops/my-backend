@@ -80,3 +80,37 @@ window.onload = () => {
         loadStats();
     }
 };
+
+/* ================================
+   6. LOAD ALL USERS (View Users Page)
+================================ */
+async function loadUsers() {
+    try {
+        const data = await api(`${BACKEND}/api/admin/users`);
+
+        if (!data.success) {
+            console.error("Failed to load users");
+            return;
+        }
+
+        const table = document.getElementById("userTable");
+        table.innerHTML = "";
+
+        data.users.forEach(user => {
+            table.innerHTML += `
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.user_name}</td>
+                <td>${user.user_type}</td>
+                <td>${new Date(user.date_created).toLocaleString()}</td>
+                <td>
+                    <button class="btn-edit" onclick="editUser(${user.id})">Edit</button>
+                    <button class="btn-delete" onclick="deleteUser(${user.id})">Delete</button>
+                </td>
+            </tr>`;
+        });
+
+    } catch (err) {
+        console.error("Error loading users:", err);
+    }
+}
