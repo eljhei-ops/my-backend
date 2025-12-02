@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-box {
+            width: 350px;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #005bbf;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+    <h2>Login</h2>
+
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Enter username">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter password">
+
+    <button onclick="login()">Login</button>
+
+    <div id="result" class="message"></div>
+</div>
+
+<script>
+function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const resultBox = document.getElementById("result");
+
+    resultBox.textContent = "";
+    resultBox.className = "message";
+
+    if (!username || !password) {
+        resultBox.textContent = "Please enter username and password.";
+        resultBox.classList.add("error");
+        return;
+    }
+
+    fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) {
+            resultBox.textContent = data.message;
+            resultBox.classList.add("error");
+            return;
+        }
+
+        // Save JWT token
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user_type", data.user_type);
+
+        resultBox.textContent = "Login successful!";
+        resultBox.classList.add("success");
+
+        setTimeout(() => {
+            if (data.user_type === "IT") {
+                window.location.href = "/admin-dashboard";
+            } else {
+                alert("You are logged in, but not authorized to access the Admin Dashboard.");
+                window.location.href = "/home.html"; // replace with your homepage
+            }
+        }, 500);
+    })
+    .catch(err => {
+        resultBox.textContent = "Server error.";
+        resultBox.classList.add("error");
+    });
+}
+</script>
+
+</body>
+</html>

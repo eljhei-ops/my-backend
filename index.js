@@ -6,6 +6,7 @@ const db = require("./db"); // db.js now uses pg
 const bcrypt = require("bcryptjs");
 const OpenAI = require("openai");
 const VALID_TYPES = ["IT", "Admin", "Client"];
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 app.use(express.json());
@@ -15,10 +16,10 @@ app.use(cors());
 // Serve static frontend folder
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-// Serve home.html on root
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend-test", "home.html"));
+  res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
 });
+
 
 // Test API endpoint
 app.get("/api/test", (req, res) => {
@@ -39,7 +40,6 @@ app.post("/api/chat", async (req, res) => {
   res.json({ reply: response.choices[0].message.content });
 });
 
-// REGISTER ENDPOINT
 // REGISTER ENDPOINT
 app.post("/api/register", async (req, res) => {
   const { username, password, usertype } = req.body;
@@ -199,11 +199,7 @@ app.post("/api/login", async (req, res) => {
     return res.json({ success: false, message: "Missing fields." });
 
   try {
-    const sql = `
-      SELECT * FROM users_credential 
-      WHERE user_name = $1
-    `;
-
+    const sql = "SELECT * FROM users WHERE user_name = $1";
     const result = await db.query(sql, [username]);
 
     if (result.rows.length === 0) {
@@ -213,15 +209,27 @@ app.post("/api/login", async (req, res) => {
     const user = result.rows[0];
     const match = await bcrypt.compare(password, user.pass_word);
 
-    if (match) {
-      return res.json({
-        success: true,
-        message: "Login successful!",
-        user_type: user.user_type
-      });
-    } else {
+    if (!match) {
       return res.json({ success: false, message: "Wrong password." });
     }
+
+    // Create a JWT token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username: user.user_name,
+        user_type: user.user_type
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+
+    return res.json({
+      success: true,
+      message: "Login successful!",
+      token: token,
+      user_type: user.user_type
+    });
 
   } catch (err) {
     console.error(err);
