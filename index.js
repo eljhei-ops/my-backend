@@ -6,7 +6,6 @@ const db = require("./db");
 const bcrypt = require("bcryptjs");
 const OpenAI = require("openai");
 require("dotenv").config();
-const OpenAI = require("openai");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
