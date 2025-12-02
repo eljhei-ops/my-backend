@@ -5,6 +5,10 @@ const path = require("path");
 const db = require("./db");
 const bcrypt = require("bcryptjs");
 const OpenAI = require("openai");
+require("dotenv").config();
+const OpenAI = require("openai");
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
