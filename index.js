@@ -16,8 +16,8 @@ app.use(cors());
 // Serve static frontend folder
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
+app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
 });
 
 
