@@ -62,8 +62,8 @@ function loadUsers() {
         const table = document.getElementById("userTable");
         table.innerHTML = "";
 
-        if (!data.success) {
-            table.innerHTML = "<tr><td colspan='5'>Failed to load users</td></tr>";
+        if (!data.success || !data.users) {
+            table.innerHTML = "<tr><td colspan='5'>No users found.</td></tr>";
             return;
         }
 
@@ -73,7 +73,7 @@ function loadUsers() {
                 <td>${user.id}</td>
                 <td>${user.user_name}</td>
                 <td>${user.user_type}</td>
-                <td>${user.date_created || ""}</td>
+                <td>${new Date(user.date_created).toLocaleString()}</td>
                 <td>
                     <button class="btn-edit" onclick="editUser(${user.id})">Edit</button>
                     <button class="btn-delete" onclick="deleteUser(${user.id})">Delete</button>
