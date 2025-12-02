@@ -56,7 +56,7 @@
 
 <script>
 function loadUsers() {
-    fetch("/api/users")
+    fetch("/api/admin/users")
     .then(r => r.json())
     .then(data => {
         const table = document.getElementById("userTable");
