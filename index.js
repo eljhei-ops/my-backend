@@ -87,6 +87,28 @@ app.post("/api/register", async (req, res) => {
 
 // ADMIN DASHBOARD
 
+// IT ADMIN STATS
+
+app.get("/api/admin/stats", async (req, res) => {
+  try {
+    const total = await db.query("SELECT COUNT(*) FROM users");
+    const it = await db.query("SELECT COUNT(*) FROM users WHERE user_type='IT'");
+    const admin = await db.query("SELECT COUNT(*) FROM users WHERE user_type='Admin'");
+    const client = await db.query("SELECT COUNT(*) FROM users WHERE user_type='Client'");
+
+    res.json({
+      total_users: total.rows[0].count,
+      total_it: it.rows[0].count,
+      total_admin: admin.rows[0].count,
+      total_client: client.rows[0].count
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false });
+  }
+});
+
 // GET ALL USER
 app.get("/api/admin/users", async (req, res) => {
   try {

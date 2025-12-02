@@ -3,147 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <title>IT Dashboard</title>
+<link rel="stylesheet" href="admin.css">
+<script src="admin.js" defer></script>
+
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background: #f2f2f2;
         margin: 0;
-        padding: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f4f6f9;
+        display: flex;
+        height: 100vh;
     }
 
-    header {
-        background: #007bff;
-        padding: 15px;
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        background: #0A2A43;
         color: white;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        padding-top: 20px;
     }
 
-    .container {
-        padding: 25px;
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 22px;
+        font-weight: 600;
     }
 
-    h2 {
-        color: #333;
+    .sidebar a {
+        padding: 15px 20px;
+        color: #dce6f2;
+        text-decoration: none;
+        font-size: 16px;
+        display: block;
+        transition: 0.2s;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
+    .sidebar a:hover {
+        background: #12456A;
+        padding-left: 25px;
     }
 
-    th, td {
-        padding: 12px;
-        border-bottom: 1px solid #ccc;
-        text-align: left;
-    }
-
-    th {
-        background: #007bff;
-        color: white;
-    }
-
-    button {
-        padding: 10px 15px;
-        margin-top: 15px;
+    /* Logout button */
+    .logout-btn {
+        margin-top: auto;
+        background: #B30000;
+        text-align: center;
+        padding: 14px 20px;
         cursor: pointer;
-        background: #007bff;
-        border: none;
-        color: white;
-        border-radius: 5px;
+        font-weight: bold;
     }
 
-    button:hover {
-        background: #005bbf;
+    .logout-btn:hover {
+        background: #D00000;
     }
 
+    /* Top Header */
+    .header {
+        height: 60px;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 15px 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 20px;
+        color: #0A2A43;
+    }
+
+    /* Main content */
+    .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Dashboard Cards */
+    .cards {
+        padding: 30px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        background: white;
+        width: 280px;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        transition: 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+    }
+
+    .card h3 {
+        margin-top: 0;
+        color: #0A2A43;
+        font-size: 18px;
+    }
+
+    .card p {
+        margin: 8px 0 0;
+        color: #555;
+    }
 </style>
 </head>
-<body>
 
-<header>
-    <h2>IT Dashboard</h2>
-    <button onclick="logout()">Logout</button>
-</header>
+<body onload="requireIT()">
 
-<div class="container">
-    <h3>Welcome, IT User</h3>
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>IT Panel</h2>
+    <a href="it-dashboard.html">🏠 Dashboard</a>
+    <a href="add_user.html">➕ Add User</a>
+    <a href="view_users.html">📋 View Users</a>
+    <a href="edit_user.html">✏️ Edit User</a>
 
-    <h3>List of Users</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Type</th>
-                <th>Date Created</th>
-            </tr>
-        </thead>
-        <tbody id="userTable"></tbody>
-    </table>
+    <div class="logout-btn" onclick="logout()">🚪 Logout</div>
 </div>
 
-<script>
-const BACKEND_URL = "https://my-backend-asx6.onrender.com";
+<!-- Main Content -->
+<div class="main">
 
-// ========== PROTECT PAGE ==========
+    <div class="header">
+        <h1>Welcome, IT Administrator</h1>
+        <span id="currentUser" style="color:#0A2A43; font-weight:bold;"></span>
+    </div>
 
-const token = localStorage.getItem("token");
-const user_type = localStorage.getItem("user_type");
+    <div class="cards">
+        <div class="card">
+            <h3>Total Users</h3>
+            <p id="countUsers">Loading...</p>
+        </div>
 
-// Only IT is allowed
-if (!token || user_type !== "IT") {
-    alert("Access restricted to IT users only.");
-    window.location.href = "/login.html";
-}
+        <div class="card">
+            <h3>IT Users</h3>
+            <p id="countIT">Loading...</p>
+        </div>
 
-// ========== LOAD USERS ==========
+        <div class="card">
+            <h3>Clients</h3>
+            <p id="countClient">Loading...</p>
+        </div>
 
-async function loadUsers() {
-    try {
-        const res = await fetch(`${BACKEND_URL}/api/admin/users`, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-            alert("Failed to load users.");
-            return;
-        }
-
-        let rows = "";
-        data.users.forEach(u => {
-            rows += `
-                <tr>
-                    <td>${u.id}</td>
-                    <td>${u.user_name}</td>
-                    <td>${u.user_type}</td>
-                    <td>${u.date_created}</td>
-                </tr>
-            `;
-        });
-
-        document.getElementById("userTable").innerHTML = rows;
-
-    } catch (err) {
-        alert("Error loading users.");
-    }
-}
-
-loadUsers();
-
-// ========== LOGOUT ==========
-
-function logout() {
-    localStorage.clear();
-    window.location.href = "/login.html";
-}
-</script>
+        <div class="card">
+            <h3>Admins</h3>
+            <p id="countAdmin">Loading...</p>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
