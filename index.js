@@ -90,6 +90,17 @@ app.post("/api/login", (req, res) => {
   });
 });
 
+app.get("/api/db-test", (req, res) => {
+  const sql = "SELECT 1 + 1 AS result"; // simple query
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("DB Connection Error:", err);
+      return res.json({ success: false, message: "Database not connected" });
+    }
+    res.json({ success: true, message: "Database connected", data: results[0] });
+  });
+});
+
 
 // Start server
 const port = process.env.PORT || 3000;
