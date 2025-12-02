@@ -4,6 +4,87 @@
     <title>Add User</title>
     <link rel="stylesheet" href="admin.css">
     <script src="admin.js"></script>
+
+    <style>
+        /* ---- Improved UI styling ---- */
+
+        .form-card {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            animation: fadeIn 0.35s ease-in-out;
+        }
+
+        .form-card h2 {
+            margin-bottom: 5px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #2d6cdf;
+            box-shadow: 0 0 4px rgba(45,108,223,0.3);
+        }
+
+        .primary-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #2d6cdf;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .primary-btn:hover {
+            background: #1e54b3;
+        }
+
+        .msg {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 
 <body onload="requireAdmin()">
@@ -19,16 +100,12 @@
 
     <!-- MAIN PANEL -->
     <div class="main">
-
-        <!-- TOPBAR -->
         <header class="topbar">
             <h1>Add User</h1>
         </header>
 
-        <!-- PAGE CONTENT -->
         <section class="content">
-
-            <div class="card form-card">
+            <div class="form-card">
 
                 <h2>Create New User</h2>
                 <p class="subtitle">Fill in the details below to register a new account.</p>
@@ -62,7 +139,6 @@
 
             </div>
         </section>
-
     </div>
 
     <script>
