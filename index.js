@@ -13,14 +13,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// Serve static frontend folder
+// Serve static files first
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-// Serve login.html only for unknown NON-API routes
-app.use((req, res, next) => {
+// Fallback ONLY when the file does NOT exist
+app.get("*", (req, res, next) => {
     if (req.path.startsWith("/api/")) return next();
+
+    // If the file exists, serve it
+    if (req.path.includes(".html") || req.path.includes(".js") || req.path.includes(".css")) {
+        return res.status(404).send("File not found");
+    }
+
+    // Otherwise, fallback to login
     res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
 });
+
 
 
 
