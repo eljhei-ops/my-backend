@@ -118,6 +118,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+
 // UPDATE USER
 app.put("/api/admin/users/:id", async (req, res) => {
   const { user_name, pass_word, user_type } = req.body;
