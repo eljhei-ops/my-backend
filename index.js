@@ -81,10 +81,11 @@ app.get("/api/admin/users", async (req, res) => {
 
 // ADD USER
 app.post("/api/register", async (req, res) => {
-  const { user_name, pass_word, user_type } = req.body;
+  const { user_name, user_pass, user_type } = req.body;
 
-  if (!user_name || !pass_word)
-    return res.json({ success: false, message: "Missing fields." });
+if (!user_name || !user_pass || !user_type) {
+    return res.json({ success: false, message: "Missing fields" });
+}
 
   const existingUsers = await db.query("SELECT COUNT(*) FROM users");
   const isFirstUser = Number(existingUsers.rows[0].count) === 0;
