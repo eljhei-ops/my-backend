@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<div class="sidebar">
+    <h2 class="sidebar-title">Admin Panel</h2>
+    <nav>
+        <a href="admin2-dashboard.html" class="active">📊 Dashboard</a>
+        <a href="admin2_claims.html">📁 Claims</a>
+    </nav>
+    <button onclick="logout()" class="logout-btn">Logout</button>
+</div>
+
+<div class="main">
+    <div class="header">
+        <h1>Claims Overview</h1>
+        <p class="subtitle">Real-time monitoring of all submitted insurance claims</p>
+    </div>
+
+    <div class="stats-container">
+
+        <div class="stat-box pending">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+                <h3>Pending</h3>
+                <p id="countPending">0</p>
+            </div>
+        </div>
+
+        <div class="stat-box approved">
+            <div class="stat-icon">✔️</div>
+            <div class="stat-info">
+                <h3>Approved</h3>
+                <p id="countApproved">0</p>
+            </div>
+        </div>
+
+        <div class="stat-box denied">
+            <div class="stat-icon">❌</div>
+            <div class="stat-info">
+                <h3>Denied</h3>
+                <p id="countDenied">0</p>
+            </div>
+        </div>
+
+        <div class="stat-box resubmit">
+            <div class="stat-icon">📄</div>
+            <div class="stat-info">
+                <h3>For Resubmission</h3>
+                <p id="countResubmit">0</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="admin2.js"></script>
+</body>
+</html>

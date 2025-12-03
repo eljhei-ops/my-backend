@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const path = require("path");
-const db = require("./db"); // db.js now uses pg
+const db = require("./db"); 
 const bcrypt = require("bcryptjs");
 const OpenAI = require("openai");
 const VALID_TYPES = ["IT", "Admin", "Client"];
@@ -15,13 +15,19 @@ app.use(cors());
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "frontend-test")));
+app.use("/admin", express.static(path.join(__dirname, "frontend-test/admin")));
+app.use("/admin2", express.static(path.join(__dirname, "frontend-test/admin2")));
 
-// Test API endpoint
+/* ---------------------------------------------------
+   TEST API
+--------------------------------------------------- */
 app.get("/api/test", (req, res) => {
   res.json({ message: "Hello from Render backend!" });
 });
 
-// OpenAI chat endpoint
+/* ---------------------------------------------------
+   OPENAI ENDPOINT
+--------------------------------------------------- */
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.post("/api/chat", async (req, res) => {
@@ -35,10 +41,9 @@ app.post("/api/chat", async (req, res) => {
   res.json({ reply: response.choices[0].message.content });
 });
 
-// ADMIN DASHBOARD
-
-// IT ADMIN STATS
-
+/* ---------------------------------------------------
+   ADMIN DASHBOARD – USER STATS
+--------------------------------------------------- */
 app.get("/api/admin/stats", async (req, res) => {
   try {
     const total = await db.query("SELECT COUNT(*) FROM users");
@@ -59,7 +64,9 @@ app.get("/api/admin/stats", async (req, res) => {
   }
 });
 
-// GET ALL USER
+/* ---------------------------------------------------
+   USER CRUD (IT ADMIN)
+--------------------------------------------------- */
 app.get("/api/admin/users", async (req, res) => {
   try {
     const sql = "SELECT id, user_name, user_type, date_created FROM users ORDER BY id ASC";
@@ -78,7 +85,6 @@ app.post("/api/register", async (req, res) => {
   if (!user_name || !pass_word)
     return res.json({ success: false, message: "Missing fields." });
 
-  // If first user → force type to IT
   const existingUsers = await db.query("SELECT COUNT(*) FROM users");
   const isFirstUser = Number(existingUsers.rows[0].count) === 0;
 
@@ -111,14 +117,13 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-
 // UPDATE USER
 app.put("/api/admin/users/:id", async (req, res) => {
   const { user_name, pass_word, user_type } = req.body;
   const { id } = req.params;
 
   if (!VALID_TYPES.includes(user_type))
-    return res.json({ success: false, message: "Invalid user_type. Allowed: IT, Admin, Client" });
+    return res.json({ success: false, message: "Invalid user_type." });
 
   try {
     let sql = "";
@@ -134,7 +139,6 @@ app.put("/api/admin/users/:id", async (req, res) => {
         user_type = $3
         WHERE id = $4
       `;
-
       params = [user_name, hash, user_type, id];
 
     } else {
@@ -144,7 +148,6 @@ app.put("/api/admin/users/:id", async (req, res) => {
         user_type = $2
         WHERE id = $3
       `;
-
       params = [user_name, user_type, id];
     }
 
@@ -170,52 +173,37 @@ app.delete("/api/admin/users/:id", async (req, res) => {
   }
 });
 
-
-// LOGIN ENDPOINT
+/* ---------------------------------------------------
+   LOGIN
+--------------------------------------------------- */
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
-
-  console.log("---- LOGIN DEBUG ----");
-  console.log("BODY:", req.body);
-  console.log("USERNAME:", username);
-  console.log("PASSWORD PROVIDED:", password);
 
   if (!username || !password)
     return res.json({ success: false, message: "Missing fields." });
 
   try {
-    const sql = "SELECT * FROM users WHERE user_name = $1";
-    const result = await db.query(sql, [username]);
+    const result = await db.query("SELECT * FROM users WHERE user_name = $1", [username]);
 
-    if (result.rows.length === 0) {
+    if (result.rows.length === 0)
       return res.json({ success: false, message: "User not found." });
-    }
 
     const user = result.rows[0];
 
-    console.log("HASH IN DB:", user.pass_word);
-
     const match = await bcrypt.compare(password, user.pass_word);
-
-    if (!match) {
+    if (!match)
       return res.json({ success: false, message: "Wrong password." });
-    }
 
-    // Create a JWT token
     const token = jwt.sign(
-      {
-        id: user.id,
-        username: user.user_name,
-        user_type: user.user_type
-      },
+      { id: user.id, username: user.user_name, user_type: user.user_type },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
 
-    return res.json({
+    res.json({
       success: true,
       message: "Login successful!",
-      token: token,
+      token,
       user_type: user.user_type,
       user_name: user.user_name,
       user_id: user.id
@@ -227,30 +215,115 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+/* ---------------------------------------------------
+   CLAIMS MODULE (Admin2)
+--------------------------------------------------- */
 
-// DB TEST
-app.get("/api/db-test", async (req, res) => {
+// GET ALL CLAIMS
+app.get('/api/admin2/claims', async (req, res) => {
   try {
-    const result = await db.query("SELECT 1 + 1 AS result");
-    res.json({ success: true, message: "Database connected", data: result.rows[0] });
+    const result = await db.query("SELECT * FROM claims ORDER BY claim_id DESC");
+    res.json(result.rows);
   } catch (err) {
-    console.error("DB Connection Error:", err);
-    res.json({ success: false, message: "Database not connected" });
+    res.status(500).json({ error: err.message });
   }
 });
 
+// SUBMIT CLAIM
+app.post('/api/admin2/claims', async (req, res) => {
+  const {
+    claim_code,
+    claim_amount,
+    hospital_name,
+    patient_name,
+    submitted_by,
+  } = req.body;
 
+  try {
+    const sql = `
+      INSERT INTO claims
+      (claim_code, claim_amount, hospital_name, patient_name, submitted_by)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *
+    `;
 
-// Test DB connection on server start
-db.query("SELECT NOW() AS now")
-  .then(res => console.log("✅ Database connected! Current time:", res.rows[0].now))
-  .catch(err => console.error("❌ DB connection error:", err));
+    const result = await db.query(sql, [
+      claim_code,
+      claim_amount,
+      hospital_name,
+      patient_name,
+      submitted_by,
+    ]);
 
-// EXPRESS 5 SAFE FALLBACK
-app.get(/^(?!\/api\/).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
-  
-// Start server
+
+// Shared status updater
+async function updateClaimStatus(id, status, res) {
+  try {
+    const sql = `
+      UPDATE claims
+      SET claim_status = $1, claim_date_updated = NOW()
+      WHERE claim_id = $2
+      RETURNING *
+    `;
+    const result = await db.query(sql, [status, id]);
+
+    if (result.rows.length === 0)
+      return res.status(404).json({ error: "Claim not found" });
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// APPROVE
+app.put('/api/admin2/claims/:id/approve', (req, res) => {
+  updateClaimStatus(req.params.id, "Approved", res);
+});
+
+// DENY
+app.put('/api/admin2/claims/:id/deny', (req, res) => {
+  updateClaimStatus(req.params.id, "Denied", res);
+});
+
+// RESUBMIT
+app.put('/api/admin2/claims/:id/resubmit', (req, res) => {
+  updateClaimStatus(req.params.id, "Resubmit", res);
+});
+
+// CLAIMS STATS
+app.get('/api/admin2/stats', async (req, res) => {
+  try {
+    const sql = `
+      SELECT
+        COUNT(*) FILTER (WHERE claim_status = 'Pending') AS pending,
+        COUNT(*) FILTER (WHERE claim_status = 'Approved') AS approved,
+        COUNT(*) FILTER (WHERE claim_status = 'Denied') AS denied,
+        COUNT(*) FILTER (WHERE claim_status = 'Resubmit') AS resubmit,
+        COUNT(*) AS total
+      FROM claims
+    `;
+    const result = await db.query(sql);
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ---------------------------------------------------
+   FALLBACK → LOAD login.html
+--------------------------------------------------- */
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend-test/login.html"));
+});
+
+/* ---------------------------------------------------
+   START SERVER
+--------------------------------------------------- */
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => console.log(`🚀 Server running on port ${port}`));

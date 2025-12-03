@@ -1,0 +1,173 @@
+/* ===============================
+   GLOBAL
+================================= */
+
+body {
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1d2b3a;
+}
+
+/* ===============================
+   SIDEBAR
+================================= */
+
+.sidebar {
+    position: fixed;
+    width: 230px;
+    height: 100%;
+    background: #0A2A43;
+    padding: 25px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+}
+
+.sidebar-title {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    color: #dce6f1;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.2s;
+}
+
+.sidebar nav a:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.sidebar nav a.active {
+    background: #1f5b89;
+    font-weight: 600;
+}
+
+.logout-btn {
+    margin-top: auto;
+    padding: 12px;
+    width: 100%;
+    background: #D9534F;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background: #c9302c;
+}
+
+/* ===============================
+   MAIN CONTENT
+================================= */
+
+.main {
+    margin-left: 260px;
+    padding: 40px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+    color: #0A2A43;
+}
+
+.subtitle {
+    margin-top: 5px;
+    font-size: 15px;
+    color: #556677;
+}
+
+/* ===============================
+   STAT BOXES
+================================= */
+
+.stats-container {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.stat-box {
+    display: flex;
+    align-items: center;
+    padding: 22px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.stat-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 35px;
+    margin-right: 18px;
+}
+
+.stat-info h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #0A2A43;
+}
+
+.stat-info p {
+    margin: 3px 0 0;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* Colors */
+.stat-box.pending { border-left: 6px solid #007bff; }
+.stat-box.approved { border-left: 6px solid #28a745; }
+.stat-box.denied { border-left: 6px solid #dc3545; }
+.stat-box.resubmit { border-left: 6px solid #ffc107; }
+
+/* ===============================
+   CLAIMS TABLE
+================================= */
+
+.claims-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 35px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+}
+
+.claims-table th {
+    background: #0A2A43;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-size: 15px;
+}
+
+.claims-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.claims-table tr:hover td {
+    background: #f1f7ff;
+}

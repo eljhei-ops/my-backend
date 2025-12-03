@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Claims Management</title>
+    <link rel="stylesheet" href="admin2.css">
+</head>
+<body>
+<div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="admin2-dashboard.html">Dashboard</a>
+    <a href="admin2_claims.html">Claims</a>
+    <button onclick="logout()" class="logout-btn">Logout</button>
+</div>
+
+<div class="main">
+    <h1>All Claims</h1>
+
+    <table class="claims-table">
+        <thead>
+            <tr>
+                <th>Claim ID</th>
+                <th>Claim Code</th>
+                <th>Amount</th>
+                <th>Hospital</th>
+                <th>Patient</th>
+                <th>Date Filed</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Updated</th>
+            </tr>
+        </thead>
+        <tbody id="claimsTable"></tbody>
+    </table>
+</div>
+
+<script src="admin2.js"></script>
+</body>
+</html>
