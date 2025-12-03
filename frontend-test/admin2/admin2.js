@@ -71,10 +71,69 @@ async function loadClaims() {
                 <td>${c.claim_status}</td>
                 <td>${new Date(c.claim_date_created).toLocaleString()}</td>
                 <td>${new Date(c.claim_date_updated).toLocaleString()}</td>
+                <td>
+                <button class="small-btn" onclick="openModal(${c.claim_id})"> Manage </button>
+                </td>
             </tr>
         `;
     });
 }
+
+/* ============================
+   MODAL LOGIC
+============================ */
+let selectedClaimId = null;
+
+function openModal(id) {
+    selectedClaimId = id;
+    document.getElementById("modalTitle").innerText = `Update Claim #${id}`;
+    document.getElementById("actionModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("actionModal").style.display = "none";
+    selectedClaimId = null;
+}
+
+
+async function updateClaimStatus(action) {
+    if (!selectedClaimId) return;
+
+    const response = await api(`${BACKEND}/api/admin2/claims/${selectedClaimId}/${action}`, {
+        method: "PUT"
+    });
+
+    if (response.error) {
+        alert("Error: " + response.error);
+        return;
+    }
+
+    alert("Claim updated successfully.");
+    closeModal();
+    loadClaims();
+}
+
+window.onload = () => {
+    requireAdmin();
+
+    // dashboard page
+    if (document.getElementById("countPending")) {
+        loadClaimStats();
+    }
+
+    // claims page
+    if (document.getElementById("claimsTable")) {
+        loadClaims();
+    }
+
+    // modal event listeners (only exist on claims page)
+    if (document.getElementById("approveBtn")) {
+        document.getElementById("approveBtn").onclick = () => updateClaimStatus("approve");
+        document.getElementById("denyBtn").onclick = () => updateClaimStatus("deny");
+        document.getElementById("resubmitBtn").onclick = () => updateClaimStatus("resubmit");
+    }
+};
+
 
 /* ============================
    AUTO LOAD BASED ON PAGE
@@ -90,3 +149,5 @@ window.onload = () => {
         loadClaims();
     }
 };
+
+

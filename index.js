@@ -223,7 +223,7 @@ app.post("/api/login", async (req, res) => {
 app.get('/api/admin2/claims', async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM claims ORDER BY claim_id DESC");
-    res.json(result.rows);
+    res.json({ claims: result.rows });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
