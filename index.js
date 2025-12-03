@@ -35,20 +35,6 @@ app.post("/api/chat", async (req, res) => {
   res.json({ reply: response.choices[0].message.content });
 });
 
-  // Valid types (case-insensitive allowed from frontend)
-  const allowedTypes = ["IT", "Admin", "Client"];
-
-  // Normalize casing (Admin, Client)
-  const formattedType =
-    usertype.charAt(0).toUpperCase() + usertype.slice(1).toLowerCase();
-
-  if (!allowedTypes.includes(formattedType)) {
-    return res.json({
-      success: false,
-      message: "Invalid user type. Must be IT, Admin, or Client.",
-    });
-  }
-
   try {
     const hash = await bcrypt.hash(password, 10);
 
