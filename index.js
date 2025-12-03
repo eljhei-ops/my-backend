@@ -13,16 +13,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// Serve static files
+// Serve static frontend files
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-    // If the request is for an actual file (html/js/css/img), but the file does not exist → 404
-    if (req.path.match(/\.(html|js|css|png|jpg|jpeg|gif|svg)$/)) {
-        return res.status(404).send("File not found");
-    }
+// Catch missing static files (HTML/JS/CSS/etc)
+app.get("*", (req, res, next) => {
 
-    // Otherwise return login page
-    res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
+  // If request is for a file but it doesn't exist → 404
+  if (req.path.match(/\.(html|js|css|png|jpg|jpeg|gif|svg)$/)) {
+    return res.status(404).send("File not found");
+  }
+
+  // Otherwise always return login page
+  res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
 });
 
 // Test API endpoint
@@ -293,10 +296,6 @@ app.get("/api/db-test", async (req, res) => {
   }
 });
 
-// Fallback route for ALL non-API requests (Express 5 safe)
-app.get(/^(?!\/api\/).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
-});
 
 
 // Test DB connection on server start
@@ -304,6 +303,11 @@ db.query("SELECT NOW() AS now")
   .then(res => console.log("✅ Database connected! Current time:", res.rows[0].now))
   .catch(err => console.error("❌ DB connection error:", err));
 
+// EXPRESS 5 SAFE FALLBACK
+app.get(/^(?!\/api\/).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
+});
+  
 // Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
