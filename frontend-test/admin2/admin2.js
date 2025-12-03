@@ -67,6 +67,7 @@ async function loadClaims() {
                 <td>${c.hospital_name}</td>
                 <td>${c.patient_name}</td>
                 <td>${new Date(c.date_of_claim).toLocaleDateString()}</td>
+                <td>${c.submitted_by}</td> 
                 <td>${c.claim_status}</td>
                 <td>${new Date(c.claim_date_created).toLocaleString()}</td>
                 <td>${new Date(c.claim_date_updated).toLocaleString()}</td>
