@@ -96,12 +96,20 @@ app.post("/api/register", async (req, res) => {
         // Hash password
         const hashed = await bcrypt.hash(pass_word, 10);
 
-        const result = await db.query(
+        let type = user_type;
+
+            if (user_type === "CLIENT") type = "Client";
+            if (user_type === "ADMIN") type = "Admin";
+            if (user_type === "IT") type = "IT";
+
+
+          const result = await db.query(
             `INSERT INTO users (user_name, pass_word, user_type)
-             VALUES ($1, $2, $3)
-             RETURNING id`,
-            [user_name, hashed, user_type]
-        );
+            VALUES ($1, $2, $3)
+            RETURNING id`,
+            [user_name, hashed, Type]
+          );
+
 
         console.log("✅ User created with ID:", result.rows[0].id);
 
