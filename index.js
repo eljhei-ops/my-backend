@@ -81,43 +81,26 @@ app.get("/api/admin/users", async (req, res) => {
 
 // ADD USER
 app.post("/api/register", async (req, res) => {
-  const { user_name, user_pass, user_type } = req.body;
+    const { user_name, user_pass, user_type } = req.body;
 
-if (!user_name || !user_pass || !user_type) {
-    return res.json({ success: false, message: "Missing fields" });
-}
+    if (!user_name || !user_pass || !user_type) {
+        return res.json({ success: false, message: "Missing fields" });
+    }
 
-  const existingUsers = await db.query("SELECT COUNT(*) FROM users");
-  const isFirstUser = Number(existingUsers.rows[0].count) === 0;
+    try {
+        await db.query(
+            "INSERT INTO users (user_name, user_pass, user_type) VALUES (?, ?, ?)",
+            [user_name, user_pass, user_type]
+        );
 
-  const finalType = isFirstUser ? "IT" : user_type;
+        res.json({ success: true, message: "User created successfully" });
 
-  if (!VALID_TYPES.includes(finalType))
-    return res.json({ success: false, message: "Invalid user type." });
-
-  try {
-    const hash = await bcrypt.hash(password, 10);
-
-    const sql = `
-      INSERT INTO users (user_name, pass_word, user_type, date_created)
-      VALUES ($1, $2, $3, NOW())
-      RETURNING id
-    `;
-
-    const result = await db.query(sql, [user_name, hash, finalType]);
-
-    res.json({
-      success: true,
-      message: "User registered successfully!",
-      userId: result.rows[0].id,
-      user_type: finalType
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.json({ success: false, message: "User creation failed." });
-  }
+    } catch (err) {
+        console.error("REGISTER ERROR:", err);
+        res.json({ success: false, message: "Error creating user" });
+    }
 });
+
 
 
 // UPDATE USER
