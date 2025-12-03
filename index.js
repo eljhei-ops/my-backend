@@ -95,10 +95,12 @@ app.post("/api/register", async (req, res) => {
 
         res.json({ success: true, message: "User created successfully" });
 
-    } catch (err) {
-        console.error("REGISTER ERROR:", err);
-        res.json({ success: false, message: "Error creating user" });
-    }
+    } 
+    catch (err) {
+    console.error("REGISTER ERROR:", err); // <-- LOG REAL PG ERROR
+    res.json({ success: false, message: "Error creating user", error: err });
+}
+
 });
 
 
