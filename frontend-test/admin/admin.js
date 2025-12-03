@@ -6,7 +6,7 @@ const BACKEND = "https://my-backend-asx6.onrender.com";
 function requireIT() {
     const token = localStorage.getItem("token");
     const type = localStorage.getItem("user_type");
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem("user_name");
 
     if (!token || type !== "IT") {
         alert("Unauthorized access. IT users only.");
@@ -17,7 +17,7 @@ function requireIT() {
     // If page has a user display
     const label = document.getElementById("currentUser");
     if (label) {
-        label.innerText = "Logged in as: " + username;
+        label.innerText = "Logged in as: " + (username ?? "Unknown User");
     }
 }
 
