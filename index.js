@@ -81,28 +81,37 @@ app.get("/api/admin/users", async (req, res) => {
 
 // ADD USER
 app.post("/api/register", async (req, res) => {
-    const { user_name, user_pass, user_type } = req.body;
+    console.log("📥 Received /api/register request");
+    console.log("Request body:", req.body);
 
-    if (!user_name || !user_pass || !user_type) {
-        return res.json({ success: false, message: "Missing fields" });
+    const { user_name, pass_word, user_type } = req.body;
+
+    if (!user_name || !pass_word || !user_type) {
+        console.log("❌ Missing fields");
+        return res.status(400).json({ message: "Missing fields" });
     }
 
     try {
-        await db.query(
-            "INSERT INTO users (user_name, user_pass, user_type) VALUES (?, ?, ?)",
-            [user_name, user_pass, user_type]
+
+        // Hash password
+        const hashed = await bcrypt.hash(pass_word, 10);
+
+        const result = await db.query(
+            `INSERT INTO users (user_name, pass_word, user_type)
+             VALUES ($1, $2, $3)
+             RETURNING id`,
+            [user_name, hashed, user_type]
         );
 
-        res.json({ success: true, message: "User created successfully" });
+        console.log("✅ User created with ID:", result.rows[0].id);
 
-    } 
-    catch (err) {
-    console.error("REGISTER ERROR:", err); // <-- LOG REAL PG ERROR
-    res.json({ success: false, message: "Error creating user", error: err });
-}
+        res.json({ success: true, message: "User created", userId: result.rows[0].id });
 
+    } catch (err) {
+        console.error("🔥 Error creating user:", err);
+        res.status(500).json({ message: "Database error" });
+    }
 });
-
 
 
 // UPDATE USER
@@ -399,6 +408,10 @@ app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "frontend-test/login.html"));
 });
 
+// Test DB connection on server start
+db.query("SELECT NOW() AS now")
+  .then(res => console.log("✅ Database connected! Current time:", res.rows[0].now))
+  .catch(err => console.error("❌ DB connection error:", err));
 
 /* ---------------------------------------------------
    START SERVER

@@ -141,35 +141,40 @@
         </section>
     </div>
 
-    <script>
-        function addUser() {
-            const usernameVal = username.value.trim();
-            const passwordVal = password.value.trim();
-            const usertypeVal = usertype.value;
+<script>
+    function addUser() {
+        const usernameVal = username.value.trim();
+        const passwordVal = password.value.trim();
+        const usertypeVal = usertype.value;
 
-            if (!usernameVal || !passwordVal) {
-                msg.textContent = "Fill all fields!";
-                msg.style.color = "red";
-                return;
-            }
-
-            fetch(`${BACKEND}/api/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-        user_name: usernameVal,
-        user_pass: passwordVal,
-        user_type: usertypeVal
-    })
-})
-
-            .then(r => r.json())
-            .then(data => {
-                msg.textContent = data.message;
-                msg.style.color = data.success ? "green" : "red";
-            });
+        if (!usernameVal || !passwordVal) {
+            msg.textContent = "Fill all fields!";
+            msg.style.color = "red";
+            return;
         }
-    </script>
+
+        fetch(`${BACKEND}/api/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_name: usernameVal,
+                pass_word: passwordVal,   // 🔥 FIXED
+                user_type: usertypeVal     // 🔥 Already correct
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            msg.textContent = data.message;
+            msg.style.color = data.success ? "green" : "red";
+        })
+        .catch(err => {
+            msg.textContent = "Request failed";
+            msg.style.color = "red";
+        });
+    }
+</script>
+
+
 
 </body>
 </html>
