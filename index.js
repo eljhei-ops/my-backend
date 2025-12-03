@@ -16,18 +16,6 @@ app.use(cors());
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-// Catch missing static files (HTML/JS/CSS/etc)
-app.get("*", (req, res, next) => {
-
-  // If request is for a file but it doesn't exist → 404
-  if (req.path.match(/\.(html|js|css|png|jpg|jpeg|gif|svg)$/)) {
-    return res.status(404).send("File not found");
-  }
-
-  // Otherwise always return login page
-  res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
-});
-
 // Test API endpoint
 app.get("/api/test", (req, res) => {
   res.json({ message: "Hello from Render backend!" });
@@ -46,14 +34,6 @@ app.post("/api/chat", async (req, res) => {
 
   res.json({ reply: response.choices[0].message.content });
 });
-
-// REGISTER ENDPOINT
-app.post("/api/register", async (req, res) => {
-  const { username, password, usertype } = req.body;
-
-  if (!username || !password || !usertype) {
-    return res.json({ success: false, message: "Missing fields." });
-  }
 
   // Valid types (case-insensitive allowed from frontend)
   const allowedTypes = ["IT", "Admin", "Client"];
