@@ -13,25 +13,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// Serve static files first
+// Serve static files
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-// Fallback ONLY when the file does NOT exist
-app.get("*", (req, res, next) => {
+// Fallback ONLY for non-API routes
+app.get("/*", (req, res, next) => {
     if (req.path.startsWith("/api/")) return next();
 
-    // If the file exists, serve it
-    if (req.path.includes(".html") || req.path.includes(".js") || req.path.includes(".css")) {
+    // If the request is for an actual file (html/js/css/img), but the file does not exist → 404
+    if (req.path.match(/\.(html|js|css|png|jpg|jpeg|gif|svg)$/)) {
         return res.status(404).send("File not found");
     }
 
-    // Otherwise, fallback to login
+    // Otherwise return login page
     res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
 });
-
-
-
-
 
 // Test API endpoint
 app.get("/api/test", (req, res) => {
