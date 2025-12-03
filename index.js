@@ -81,9 +81,9 @@ app.get("/api/admin/users", async (req, res) => {
 
 // ADD USER
 app.post("/api/register", async (req, res) => {
-  const { user_name, password, user_type } = req.body;
+  const { user_name, pass_word, user_type } = req.body;
 
-  if (!user_name || !password)
+  if (!user_name || !pass_word)
     return res.json({ success: false, message: "Missing fields." });
 
   const existingUsers = await db.query("SELECT COUNT(*) FROM users");
