@@ -318,9 +318,10 @@ app.get('/api/admin2/stats', async (req, res) => {
 /* ---------------------------------------------------
    FALLBACK → LOAD login.html
 --------------------------------------------------- */
-app.get("*", (req, res) => {
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "frontend-test/login.html"));
 });
+
 
 /* ---------------------------------------------------
    START SERVER
