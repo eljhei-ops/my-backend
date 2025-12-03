@@ -81,9 +81,9 @@ app.get("/api/admin/users", async (req, res) => {
 
 // ADD USER
 app.post("/api/register", async (req, res) => {
-  const { user_name, pass_word, user_type } = req.body;
+  const { user_name, password, user_type } = req.body;
 
-  if (!user_name || !pass_word)
+  if (!user_name || !password)
     return res.json({ success: false, message: "Missing fields." });
 
   const existingUsers = await db.query("SELECT COUNT(*) FROM users");
@@ -95,7 +95,7 @@ app.post("/api/register", async (req, res) => {
     return res.json({ success: false, message: "Invalid user type." });
 
   try {
-    const hash = await bcrypt.hash(pass_word, 10);
+    const hash = await bcrypt.hash(password, 10);
 
     const sql = `
       INSERT INTO users (user_name, pass_word, user_type, date_created)
