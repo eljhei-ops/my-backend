@@ -35,29 +35,6 @@ app.post("/api/chat", async (req, res) => {
   res.json({ reply: response.choices[0].message.content });
 });
 
-  try {
-    const hash = await bcrypt.hash(password, 10);
-
-    const sql = `
-      INSERT INTO users (user_name, pass_word, user_type)
-      VALUES ($1, $2, $3)
-      RETURNING id
-    `;
-
-    const result = await db.query(sql, [username, hash, formattedType]);
-
-    res.json({
-      success: true,
-      message: "User registered successfully!",
-      userId: result.rows[0].id,
-    });
-  } catch (err) {
-    console.error(err);
-    res.json({ success: false, message: "User creation failed." });
-  }
-});
-
-
 // ADMIN DASHBOARD
 
 // IT ADMIN STATS
