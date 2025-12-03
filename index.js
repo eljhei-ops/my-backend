@@ -16,10 +16,6 @@ app.use(cors());
 // Serve static files
 app.use(express.static(path.join(__dirname, "frontend-test")));
 
-// Fallback ONLY for non-API routes
-app.get("/*", (req, res, next) => {
-    if (req.path.startsWith("/api/")) return next();
-
     // If the request is for an actual file (html/js/css/img), but the file does not exist → 404
     if (req.path.match(/\.(html|js|css|png|jpg|jpeg|gif|svg)$/)) {
         return res.status(404).send("File not found");
@@ -296,6 +292,12 @@ app.get("/api/db-test", async (req, res) => {
     res.json({ success: false, message: "Database not connected" });
   }
 });
+
+// Fallback route for ALL non-API requests (Express 5 safe)
+app.get(/^(?!\/api\/).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend-test", "login.html"));
+});
+
 
 // Test DB connection on server start
 db.query("SELECT NOW() AS now")
