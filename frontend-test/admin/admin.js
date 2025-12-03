@@ -17,7 +17,7 @@ function requireIT() {
     // If page has a user display
     const label = document.getElementById("currentUser");
     if (label) {
-        label.innerText = "Logged in as: " + username;
+        label.innerText = "Logged in as: " + user_name;
     }
 }
 
