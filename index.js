@@ -270,7 +270,9 @@ app.post("/api/login", async (req, res) => {
       success: true,
       message: "Login successful!",
       token: token,
-      user_type: user.user_type
+      user_type: user.user_type,
+      user_name: user.user_name,
+      user_id: user.id
     });
 
   } catch (err) {
