@@ -153,15 +153,16 @@
                 return;
             }
 
-            fetch("/api/register", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    user_name: usernameVal,
-                    pass_word: passwordVal,
-                    user_type: usertypeVal
-                })
-            })
+            fetch(`${BACKEND}/api/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        user_name: usernameVal,
+        user_pass: passwordVal,
+        user_type: usertypeVal
+    })
+})
+
             .then(r => r.json())
             .then(data => {
                 msg.textContent = data.message;
