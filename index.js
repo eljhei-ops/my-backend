@@ -17,6 +17,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "frontend-test")));
 app.use("/admin", express.static(path.join(__dirname, "frontend-test/admin")));
 app.use("/admin2", express.static(path.join(__dirname, "frontend-test/admin2")));
+app.use("/client-folder", express.static(path.join(__dirname,"frontend-test/client-folder")));
 
 /* ---------------------------------------------------
    TEST API
@@ -297,7 +298,7 @@ app.put('/api/admin2/claims/:id/resubmit', (req, res) => {
 });
 
 // CLAIMS STATS
-app.get('/api/admin2/stats', async (req, res) => {
+app.get('/api/admin2/claim-stats', async (req, res) => {
   try {
     const sql = `
       SELECT
@@ -314,6 +315,95 @@ app.get('/api/admin2/stats', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+//REQUIRE CLIENT//
+function requireClient(req, res, next) {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Missing token" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.user_type !== "Client") {
+      return res.status(403).json({ error: "Client access only" });
+    }
+
+    req.user = {
+      user_id: decoded.id,
+      user_name: decoded.username,
+      user_type: decoded.user_type
+    };
+
+    next();
+  } catch (err) {
+    res.status(401).json({ error: "Invalid or expired token" });
+  }
+}
+
+/*---------------------------------------------------
+                  CLIENTS MODULE
+---------------------------------------------------*/
+//CLIENT DASHBOARD//
+app.get("/api/client/stats", requireClient, async (req, res) => {
+  const username = req.user.user_name;
+
+  try {
+    const stats = await db.query(
+      `SELECT 
+          SUM(CASE WHEN claim_status='Pending' THEN 1 ELSE 0 END) AS pending,
+          SUM(CASE WHEN claim_status='Approved' THEN 1 ELSE 0 END) AS approved,
+          SUM(CASE WHEN claim_status='Denied' THEN 1 ELSE 0 END) AS denied,
+          SUM(CASE WHEN claim_status='Resubmit' THEN 1 ELSE 0 END) AS resubmit
+       FROM claims
+       WHERE submitted_by = $1`,
+      [username]
+    );
+
+    res.json(stats.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load client stats" });
+  }
+});
+
+//CLIENT SUBMITS A CLAIM//
+app.post("/api/client/submit", requireClient, async (req, res) => {
+  const { claim_code, claim_amount, hospital_name, patient_name, date_of_claim } = req.body;
+  const submitted_by = req.user.user_name;
+
+  try {
+    const result = await db.query(
+      `INSERT INTO claims 
+        (claim_code, claim_amount, hospital_name, patient_name, date_of_claim, submitted_by) 
+       VALUES ($1,$2,$3,$4,$5,$6)
+       RETURNING *`,
+      [claim_code, claim_amount, hospital_name, patient_name, date_of_claim, submitted_by]
+    );
+
+    res.json({ success: true, claim: result.rows[0] });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Failed to submit claim" });
+  }
+});
+
+//CLIENT FETCH THEIR SUBMITTED CLAIMS//
+app.get("/api/client/my-claims", requireClient, async (req, res) => {
+  const submitted_by = req.user.user_name;
+
+  try {
+    const result = await db.query(
+      `SELECT * FROM claims
+       WHERE submitted_by = $1
+       ORDER BY claim_date_created DESC`,
+      [submitted_by]
+    );
+
+    res.json({ claims: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load submitted claims" });
+  }
+});
+
 
 /* ---------------------------------------------------
    FALLBACK → LOAD login.html

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submitted Claims</title>
+    <link rel="stylesheet" href="clientcss.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Client</h2>
+        <a href="client-dashboard.html">Dashboard</a>
+        <a href="client_submit.html">Submit Claims</a>
+        <a href="client_submitted_claims.html">Submitted Claims</a>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+
+    <div class="content">
+        <h1>My Submitted Claims</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Code</th>
+                    <th>Amount</th>
+                    <th>Hospital</th>
+                    <th>Patient</th>
+                    <th>Status</th>
+                    <th>Date Created</th>
+                    <th>Date Updated</th>
+                </tr>
+            </thead>
+            <tbody id="claimsTable"></tbody>
+        </table>
+    </div>
+
+<script src="clientjs.js"></script>
+</body>
+</html>

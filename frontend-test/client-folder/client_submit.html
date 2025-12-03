@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Claim</title>
+    <link rel="stylesheet" href="clientcss.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Client</h2>
+        <a href="client-dashboard.html">Dashboard</a>
+        <a href="client_submit.html">Submit Claims</a>
+        <a href="client_submitted_claims.html">Submitted Claims</a>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+
+    <div class="content">
+        <h1>Submit a Claim</h1>
+
+        <form id="claimForm">
+            <label>Claim Code</label>
+            <input type="text" id="claim_code" required>
+
+            <label>Claim Amount</label>
+            <input type="number" id="claim_amount" required>
+
+            <label>Hospital Name</label>
+            <input type="text" id="hospital_name" required>
+
+            <label>Patient Name</label>
+            <input type="text" id="patient_name" required>
+
+            <label>Date of Claim</label>
+            <input type="date" id="date_of_claim" required>
+
+            <div class="form-buttons">
+                <button type="button" onclick="submitClaim()">Submit</button>
+                <button type="reset">Clear</button>
+            </div>
+        </form>
+    </div>
+
+<script src="clientjs.js"></script>
+</body>
+</html>
