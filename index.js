@@ -271,17 +271,17 @@ async function updateClaimStatus(id, status, res) {
 }
 
 // APPROVE
-app.put('/api/admin2/claims/:id/approve', (req, res) => {
+app.put('/api/admin2/claims/:id/approve', requireAdmin, (req, res) => {
   updateClaimStatus(req.params.id, "Approved", res);
 });
 
 // DENY
-app.put('/api/admin2/claims/:id/deny', (req, res) => {
+app.put('/api/admin2/claims/:id/deny', requireAdmin, (req, res) => {
   updateClaimStatus(req.params.id, "Denied", res);
 });
 
 // RESUBMIT
-app.put('/api/admin2/claims/:id/resubmit', (req, res) => {
+app.put('/api/admin2/claims/:id/resubmit', requireAdmin, (req, res) => {
   updateClaimStatus(req.params.id, "Resubmit", res);
 });
 
