@@ -72,6 +72,10 @@ async function loadClaims() {
    UPDATE CLAIM STATUS
 ============================ */
 async function updateClaimStatus(id, action) {
+
+    const confirmed = confirm(`Are you sure you want to update Claim #${id} to "${action}"?`);
+    if (!confirmed) return;  // Stop if user clicks CANCEL
+
     const response = await api(`${BACKEND}/api/admin2/claims/${id}/${action}`, {
         method: "PUT"
     });
@@ -84,6 +88,7 @@ async function updateClaimStatus(id, action) {
     alert(`Claim #${id} updated to: ${action}`);
     loadClaims();
 }
+
 
 /* ============================
    AUTO LOAD
