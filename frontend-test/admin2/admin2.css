@@ -174,7 +174,7 @@ body {
 }
 
 .small-btn {
-    padding: 6px 10px;
+    padding: 7% 25%;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -184,29 +184,14 @@ body {
 
 .small-btn.approve { 
     background: #28a745;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 5px; 
 }
 
 .small-btn.deny { 
     background: #dc3545;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 5px;
 }
 
 .small-btn.resubmit { 
     background: #ffc107; 
     color: black; 
-    padding: 6px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 5px;
 }
 
