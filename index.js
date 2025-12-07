@@ -220,6 +220,31 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+// REQUIRE ADMIN //
+function requireAdmin(req, res, next) {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Missing token" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.user_type !== "Admin") {
+      return res.status(403).json({ error: "Admin access only" });
+    }
+
+    req.user = {
+      id: decoded.id,
+      user_name: decoded.username,
+      user_type: decoded.user_type
+    };
+
+    next();
+  } catch (err) {
+    res.status(401).json({ error: "Invalid or expired token" });
+  }
+}
+
+
 /* ---------------------------------------------------
    CLAIMS MODULE (Admin2)
 --------------------------------------------------- */
@@ -270,20 +295,18 @@ async function updateClaimStatus(id, status, res) {
   }
 }
 
-// APPROVE
 app.put('/api/admin2/claims/:id/approve', requireAdmin, (req, res) => {
   updateClaimStatus(req.params.id, "Approved", res);
 });
 
-// DENY
 app.put('/api/admin2/claims/:id/deny', requireAdmin, (req, res) => {
   updateClaimStatus(req.params.id, "Denied", res);
 });
 
-// RESUBMIT
 app.put('/api/admin2/claims/:id/resubmit', requireAdmin, (req, res) => {
   updateClaimStatus(req.params.id, "Resubmit", res);
 });
+
 
 // CLAIMS STATS
 app.get('/api/admin2/claim-stats', async (req, res) => {
