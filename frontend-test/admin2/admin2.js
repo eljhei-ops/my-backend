@@ -92,3 +92,16 @@ window.onload = () => {
     requireAdmin();
     loadClaims();
 };
+
+
+/* ============================
+   LOAD DASHBOARD COUNTS
+============================ */
+async function loadClaimStats() {
+    const stats = await api(`${BACKEND}/api/admin2/claim-stats`);
+
+    document.getElementById("countPending").innerText = stats.pending;
+    document.getElementById("countApproved").innerText = stats.approved;
+    document.getElementById("countDenied").innerText = stats.denied;
+    document.getElementById("countResubmit").innerText = stats.resubmit;
+}
