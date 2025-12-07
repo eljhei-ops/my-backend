@@ -40,7 +40,8 @@ async function submitClaim() {
         claim_amount: document.getElementById("claim_amount").value,
         hospital_name: document.getElementById("hospital_name").value,
         patient_name: document.getElementById("patient_name").value,
-        date_of_claim: document.getElementById("date_of_claim").value
+        date_of_claim: document.getElementById("date_of_claim").value,
+        submitted_by: parseInt(localStorage.getItem("id"))
     };
 
     const res = await api(`${BACKEND}/api/client/submit`, {

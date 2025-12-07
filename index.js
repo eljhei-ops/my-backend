@@ -211,7 +211,7 @@ app.post("/api/login", async (req, res) => {
       token,
       user_type: user.user_type,
       user_name: user.user_name,
-      user_id: user.id
+      id: user.id
     });
 
   } catch (err) {
@@ -333,7 +333,7 @@ function requireClient(req, res, next) {
     }
 
     req.user = {
-      user_id: decoded.id,
+      id: decoded.id,
       user_name: decoded.username,
       user_type: decoded.user_type
     };
@@ -372,7 +372,7 @@ app.get("/api/client/stats", requireClient, async (req, res) => {
 //CLIENT SUBMITS A CLAIM//
 app.post("/api/client/submit", requireClient, async (req, res) => {
   const { claim_code, claim_amount, hospital_name, patient_name, date_of_claim } = req.body;
-  const submitted_by = req.user.user_name;
+  const submitted_by = req.user.id;
 
 console.log("req.user:", req.user);
 console.log("Token received:", req.headers.authorization);
