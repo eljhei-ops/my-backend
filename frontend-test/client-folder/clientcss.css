@@ -70,3 +70,34 @@ form input {
     margin-right: 10px;
     cursor: pointer;
 }
+
+/* ===============================
+   CLAIMS TABLE
+================================= */
+
+.claims-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 35px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+}
+
+.claims-table th {
+    background: #0A2A43;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-size: 15px;
+}
+
+.claims-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.claims-table tr:hover td {
+    background: #f1f7ff;
+
