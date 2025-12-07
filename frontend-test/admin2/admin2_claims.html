@@ -19,22 +19,41 @@
 <div class="main">
     <h1>All Claims</h1>
 
+    <input type="text" id="globalSearch" placeholder="Search all columns..." class="search-box">
+
+
     <table class="claims-table">
         <thead>
-            <tr>
-                <th>Claim ID</th>
-                <th>Claim Code</th>
-                <th>Amount</th>
-                <th>Hospital</th>
-                <th>Patient</th>
-                <th>Date Filed</th>
-                <th>Submitted by</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Updated</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+    <tr id="headerRow">
+        <th data-col="claim_id">Claim ID</th>
+        <th data-col="claim_code">Claim Code</th>
+        <th data-col="claim_amount">Amount</th>
+        <th data-col="hospital_name">Hospital</th>
+        <th data-col="patient_name">Patient</th>
+        <th data-col="date_of_claim">Date Filed</th>
+        <th data-col="submitted_by">Submitted By</th>
+        <th data-col="claim_status">Status</th>
+        <th data-col="claim_date_created">Created</th>
+        <th data-col="claim_date_updated">Updated</th>
+        <th>Actions</th>
+    </tr>
+
+    <!-- FILTER ROW -->
+    <tr id="filterRow">
+        <th><input class="filterInput" data-col="claim_id"></th>
+        <th><input class="filterInput" data-col="claim_code"></th>
+        <th><input class="filterInput" data-col="claim_amount"></th>
+        <th><input class="filterInput" data-col="hospital_name"></th>
+        <th><input class="filterInput" data-col="patient_name"></th>
+        <th><input class="filterInput" data-col="date_of_claim"></th>
+        <th><input class="filterInput" data-col="submitted_by"></th>
+        <th><input class="filterInput" data-col="claim_status"></th>
+        <th><input class="filterInput" data-col="claim_date_created"></th>
+        <th><input class="filterInput" data-col="claim_date_updated"></th>
+        <th></th>
+    </tr>
+</thead>
+
         <tbody id="claimsTable"></tbody>
     </table>
 </div>

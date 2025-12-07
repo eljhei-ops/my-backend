@@ -196,3 +196,26 @@ body {
     background: #ffc107; 
     color: black; 
 }
+
+.filterInput {
+    width: 100%;
+    padding: 6px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+th[data-col] {
+    cursor: pointer;
+}
+th[data-col]:hover {
+    background: #113d63;
+}
+
+.search-box {
+    width: 300px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
