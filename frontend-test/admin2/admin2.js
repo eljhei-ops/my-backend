@@ -90,7 +90,7 @@ async function updateClaimStatus(id, action) {
 ============================ */
 window.onload = () => {
     requireAdmin();
-    loadClaims();
+    loadClaimStats();
 };
 
 
