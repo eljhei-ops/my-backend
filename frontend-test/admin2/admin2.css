@@ -174,13 +174,17 @@ body {
 }
 
 .small-btn {
-    padding: 7% 25%;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
     color: white;
-    margin-right: 5px;
-    
+    padding: 12px 0;
+    width: 110px;    
+    height: 40px;      
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
 .small-btn.approve { 
@@ -194,20 +198,4 @@ body {
 .small-btn.resubmit { 
     background: #ffc107; 
     color: black; 
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px; /* spacing between buttons */
-}
-
-.modal-buttons button {
-    padding: 12px 0;
-    width: 110px;      /* ✅ makes all buttons same width */
-    height: 40px;      /* ✅ same height */
-    font-size: 14px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
 }
