@@ -141,21 +141,21 @@ html,body{
   left:-8%;
   top:-6%;
   background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 50%);
-  animation: float-1 18s linear infinite, spin-slow 40s linear infinite;
+  animation: float-1 9s linear infinite, spin-slow 20s linear infinite;
 }
 .shape-2{
   width:260px; height:260px;
   right:-6%;
   top:6%;
   background: radial-gradient(circle at 70% 20%, var(--accent-2), transparent 60%);
-  animation: float-2 22s linear infinite reverse, spin-slow 50s linear infinite;
+  animation: float-2 11s linear infinite reverse, spin-slow 25s linear infinite;
 }
 .shape-3{
   width:200px; height:360px;
   left:15%;
   bottom:-8%;
   background: radial-gradient(circle at 10% 80%, var(--accent-3), transparent 60%);
-  animation: float-3 26s linear infinite, spin-slow 60s linear infinite reverse;
+  animation: float-3 13s linear infinite, spin-slow 30s linear infinite reverse;
 }
 .shape-4{
   width:140px; height:140px;
@@ -184,8 +184,65 @@ html,body{
   border-radius:50%;
   filter: blur(24px);
   opacity:0.12;
-  animation: slide-1 28s linear infinite;
+  animation: slide-1 14s linear infinite;
 }
+
+/* --- NEW SHAPES --- */
+
+.shape-7{
+  width:300px; height:300px;
+  left:65%;
+  top:70%;
+  background: radial-gradient(circle at 30% 60%, rgba(0,150,255,0.55), transparent 65%);
+  border-radius:50%;
+  filter: blur(22px);
+  mix-blend-mode: screen;
+  animation: float-7 10s ease-in-out infinite, spin-slow 35s linear infinite;
+}
+
+.shape-8{
+  width:180px; height:180px;
+  left:5%;
+  top:45%;
+  background: radial-gradient(circle at 70% 40%, rgba(255,80,200,0.65), transparent 70%);
+  border-radius:40%;
+  filter: blur(16px);
+  animation: float-8 8s ease-in-out infinite alternate;
+}
+
+.shape-9{
+  width:120px; height:120px;
+  left:75%;
+  top:20%;
+  background: radial-gradient(circle at 40% 20%, rgba(255,255,255,0.2), transparent 60%);
+  border-radius: 25%;
+  animation: float-9 9s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+/* rotating polygon */
+.shape-10{
+  width:160px; height:160px;
+  right:40%;
+  bottom:30%;
+  background: linear-gradient(135deg, rgba(88,101,242,0.4), rgba(0,221,199,0.4));
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  filter: blur(10px);
+  opacity:0.5;
+  animation: spin-poly 9s linear infinite, float-10 12s ease-in-out infinite;
+}
+
+/* ambient wide gradient cloud */
+.shape-11{
+  width:700px; height:300px;
+  left:20%;
+  bottom:-10%;
+  background: radial-gradient(circle at 50% 50%, rgba(0,160,255,0.12), transparent 70%);
+  filter: blur(60px);
+  opacity:0.25;
+  animation: cloud-move 30s ease-in-out infinite;
+}
+
 
 /* keyframes for floating */
 @keyframes float-1{
@@ -318,6 +375,11 @@ html,body{
     <div class="shape shape-4"></div>
     <div class="shape shape-5"></div>
     <div class="shape shape-6"></div>
+	<div class="shape shape-7"></div>
+	<div class="shape shape-8"></div>
+	<div class="shape shape-9"></div>
+	<div class="shape shape-10"></div>
+	<div class="shape shape-11"></div>
 </div>
 
 <!-- Login container -->
