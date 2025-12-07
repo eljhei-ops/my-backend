@@ -234,7 +234,7 @@ app.get('/api/admin2/claims', async (req, res) => {
   }
 });
 
-// Shared status updater
+// Claim status updater
 async function updateClaimStatus(id, status, res) {
   try {
     const sql = `
