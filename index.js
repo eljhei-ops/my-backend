@@ -344,7 +344,7 @@ app.get("/api/client/stats", requireClient, async (req, res) => {
           SUM(CASE WHEN claim_status='Resubmit' THEN 1 ELSE 0 END) AS resubmit
        FROM claims
        WHERE submitted_by = $1`,
-      [username]
+      [submitted_by]
     );
 
     res.json(stats.rows[0]);
