@@ -388,6 +388,15 @@ console.log("Token received:", req.headers.authorization);
 
     res.json({ success: true, claim: result.rows[0] });
   } catch (err) {
+    console.log("🔥 SQL INSERT ERROR:", err);  // force reveal the error object
+    console.log("⚠ Values received:", {
+        claim_code,
+        claim_amount,
+        hospital_name,
+        patient_name,
+        date_of_claim,
+        submitted_by
+    });
     console.log("DB ERROR:".err);
     res.status(500).json({ error: "Failed to submit claim" });
   }
