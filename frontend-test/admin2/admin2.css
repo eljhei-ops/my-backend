@@ -186,10 +186,6 @@ body {
     gap: 10px;
 }
 
-td {
-    display: flex;
-}
-
 .small-btn.approve { 
     background: #28a745;
 }
