@@ -107,7 +107,7 @@ app.post("/api/register", async (req, res) => {
             `INSERT INTO users (user_name, pass_word, user_type)
             VALUES ($1, $2, $3)
             RETURNING id`,
-            [user_name, hashed, Type]
+            [user_name, hashed, type]
           );
 
 
