@@ -5,86 +5,343 @@
     <title>Login</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef2f3;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+/* Center login box */
+.login-wrapper {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2; /* keep above animated background */
+}
 
-        .login-box {
-            width: 350px;
-            padding: 30px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 12px rgba(0,0,0,0.2);
-        }
+/* Login box */
+.login-box {
+    width: 350px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 25px rgba(0,0,0,0.25);
+    text-align: center;
+    color: white;
+}
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
+.login-box h2 {
+    margin-bottom: 20px;
+    font-weight: 600;
+}
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 6px;
-        }
+/* Input styling */
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 18px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 15px;
-        }
+.input-group label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #007bff;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
 
-        button:hover {
-            background: #005bbf;
-        }
+/* Button */
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
 
-        .message {
-            margin-top: 15px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-        }
+.login-btn:hover {
+    background: #005fcc;
+}
 
-        .error { color: red; }
-        .success { color: green; }
+/* Message box */
+.message {
+    margin-top: 12px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: none;
+}
+
+.message.error {
+    display: block;
+    background: rgba(255, 0, 0, 0.35);
+    color: #ffcccc;
+}
+
+.message.success {
+    display: block;
+    background: rgba(0, 255, 0, 0.35);
+    color: #d4ffd4;
+}
+
+:root{
+  --bg-grad-1: #0f172a;   /* dark */
+  --bg-grad-2: #071126;   /* darker */
+  --accent-1: rgba(88, 101, 242, 0.9);
+  --accent-2: rgba(0, 221, 199, 0.85);
+  --accent-3: rgba(255, 160, 122, 0.75);
+  --card-bg: rgba(255,255,255,0.06);
+  --glass-blur: 10px;
+  --max-width: 420px;
+}
+
+/* page layout */
+html,body{
+  height:100%;
+  margin:0;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #e6eef8;
+  background: linear-gradient(160deg, var(--bg-grad-1), var(--bg-grad-2) 60%);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow:hidden;
+}
+
+/* container holding animated shapes */
+.bg-wrap{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none; /* don't block clicks */
+  overflow:hidden;
+}
+
+/* generic shape */
+.shape{
+  position:absolute;
+  border-radius: 40%;
+  filter: blur(16px) saturate(120%);
+  mix-blend-mode: screen;
+  opacity:0.9;
+  transform-origin:center;
+  will-change: transform, opacity;
+}
+
+/* individual shapes: size, color, start position, animation */
+.shape-1{
+  width:420px; height:420px;
+  left:-8%;
+  top:-6%;
+  background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 50%);
+  animation: float-1 18s linear infinite, spin-slow 40s linear infinite;
+}
+.shape-2{
+  width:260px; height:260px;
+  right:-6%;
+  top:6%;
+  background: radial-gradient(circle at 70% 20%, var(--accent-2), transparent 60%);
+  animation: float-2 22s linear infinite reverse, spin-slow 50s linear infinite;
+}
+.shape-3{
+  width:200px; height:360px;
+  left:15%;
+  bottom:-8%;
+  background: radial-gradient(circle at 10% 80%, var(--accent-3), transparent 60%);
+  animation: float-3 26s linear infinite, spin-slow 60s linear infinite reverse;
+}
+.shape-4{
+  width:140px; height:140px;
+  right:28%;
+  bottom:6%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent);
+  border-radius:18%;
+  filter: blur(8px) saturate(120%);
+  opacity:0.5;
+  animation: float-4 12s ease-in-out infinite;
+}
+.shape-5{
+  width:90px; height:90px;
+  left:48%;
+  top:10%;
+  background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.2), transparent 40%);
+  border-radius: 20%;
+  transform: rotate(12deg);
+  animation: float-5 14s ease-in-out infinite;
+}
+.shape-6{
+  width:600px; height:60px;
+  left:-30%;
+  top:44%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.035));
+  border-radius:50%;
+  filter: blur(24px);
+  opacity:0.12;
+  animation: slide-1 28s linear infinite;
+}
+
+/* keyframes for floating */
+@keyframes float-1{
+  0% { transform: translateY(0) translateX(0) scale(1); opacity:0.95; }
+  50% { transform: translateY(24px) translateX(18px) scale(1.02); opacity:0.9; }
+  100% { transform: translateY(0) translateX(0) scale(1); opacity:0.95; }
+}
+@keyframes float-2{
+  0% { transform: translateY(0) translateX(0) scale(1); }
+  33% { transform: translateY(-30px) translateX(-24px) scale(1.03); }
+  66% { transform: translateY(18px) translateX(36px) scale(0.98); }
+  100% { transform: translateY(0) translateX(0) scale(1); }
+}
+@keyframes float-3{
+  0% { transform: translateY(0) translateX(0) rotate(0deg); }
+  50% { transform: translateY(-36px) translateX(28px) rotate(6deg) scale(1.01); }
+  100% { transform: translateY(0) translateX(0) rotate(0deg); }
+}
+@keyframes float-4{
+  0% { transform: translateY(0) translateX(0) rotate(0); }
+  50% { transform: translateY(-12px) translateX(10px) rotate(8deg); }
+  100% { transform: translateY(0) translateX(0) rotate(0); }
+}
+@keyframes float-5{
+  0% { transform: translateY(0) translateX(0) rotate(12deg); }
+  50% { transform: translateY(10px) translateX(-8px) rotate(-6deg); }
+  100% { transform: translateY(0) translateX(0) rotate(12deg); }
+}
+@keyframes slide-1{
+  0% { transform: translateX(0); }
+  50% { transform: translateX(80vw); }
+  100% { transform: translateX(0); }
+}
+@keyframes spin-slow{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
+
+/* login card / glassmorphism */
+.login-card{
+  position:relative;
+  z-index:2; /* sits above shapes */
+  max-width: var(--max-width);
+  margin: min(8vh,60px) auto;
+  padding: clamp(20px,4vw,36px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255,255,255,0.06);
+  text-align:center;
+}
+
+/* form elements */
+.login-card h1{
+  margin:0 0 10px;
+  font-size:1.6rem;
+  letter-spacing:0.4px;
+}
+.login-card form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:12px;
+}
+.login-card label{
+  display:flex;
+  flex-direction:column;
+  text-align:left;
+  font-size:0.9rem;
+  color: #cfe7ff;
+}
+.login-card input{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.06);
+  background: rgba(3,7,25,0.35);
+  color: #eaf6ff;
+  outline:none;
+  font-size:0.95rem;
+}
+.login-card input:focus{
+  box-shadow: 0 4px 18px rgba(88,101,242,0.12);
+  border-color: rgba(88,101,242,0.55);
+}
+.login-card button{
+  margin-top:6px;
+  padding:10px 14px;
+  border-radius:10px;
+  border:0;
+  background: linear-gradient(90deg,var(--accent-1), var(--accent-2));
+  color:#061226;
+  font-weight:600;
+  cursor:pointer;
+  font-size:1rem;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.login-card button:active{ transform:translateY(1px); }
+.login-card .muted{
+  display:block;
+  margin-top:12px;
+  color:rgba(230,238,248,0.6);
+  font-size:0.85rem;
+}
+
+/* responsive */
+@media (max-width:560px){
+  .login-card{ margin:6vh 16px; padding:18px; }
+  .shape-1 { display:none; } /* hide big shapes on tiny screens for perf */
+}
+
+/* accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .shape { animation: none !important; transition:none !important; }
+  .shape-6 { display:none; }
+}
+
     </style>
 </head>
 
 <body>
 
-<div class="login-box">
-    <h2>Login</h2>
+<!-- Animated background shapes -->
+<div class="bg-wrap">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+    <div class="shape shape-6"></div>
+</div>
 
-    <label>Username</label>
-    <input type="text" id="username" placeholder="Enter username">
+<!-- Login container -->
+<div class="login-wrapper">
+    <div class="login-card">
+        <h1>Welcome Back</h1>
 
-    <label>Password</label>
-    <input type="password" id="password" placeholder="Enter password">
+        <form onsubmit="event.preventDefault(); login();">
 
-    <button onclick="login()">Login</button>
+            <label>
+                Username
+                <input type="text" id="username" placeholder="Enter username">
+            </label>
 
-    <div id="result" class="message"></div>
+            <label>
+                Password
+                <input type="password" id="password" placeholder="Enter password">
+            </label>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div id="result" class="message"></div>
+    </div>
 </div>
 
 <script>
