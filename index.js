@@ -234,38 +234,6 @@ app.get('/api/admin2/claims', async (req, res) => {
   }
 });
 
-// SUBMIT CLAIM
-app.post('/api/admin2/claims', async (req, res) => {
-  const {
-    claim_code,
-    claim_amount,
-    hospital_name,
-    patient_name,
-    submitted_by,
-  } = req.body;
-
-  try {
-    const sql = `
-      INSERT INTO claims
-      (claim_code, claim_amount, hospital_name, patient_name, submitted_by)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING *
-    `;
-
-    const result = await db.query(sql, [
-      claim_code,
-      claim_amount,
-      hospital_name,
-      patient_name,
-      submitted_by,
-    ]);
-
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Shared status updater
 async function updateClaimStatus(id, status, res) {
   try {
@@ -404,7 +372,7 @@ console.log("Token received:", req.headers.authorization);
 
 //CLIENT FETCH THEIR SUBMITTED CLAIMS//
 app.get("/api/client/my-claims", requireClient, async (req, res) => {
-  const submitted_by = req.user.user_name;
+  const submitted_by = req.user.id;
 
   try {
     const result = await db.query(
