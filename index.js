@@ -333,7 +333,7 @@ function requireClient(req, res, next) {
 ---------------------------------------------------*/
 //CLIENT DASHBOARD//
 app.get("/api/client/stats", requireClient, async (req, res) => {
-  const username = req.user.user_name;
+  const submitted_by = req.user.id;
 
   try {
     const stats = await db.query(
