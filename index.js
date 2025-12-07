@@ -385,7 +385,7 @@ app.post("/api/client/submit", requireClient, async (req, res) => {
 
     res.json({ success: true, claim: result.rows[0] });
   } catch (err) {
-    console.log(err);
+    console.log("DB ERROR:".err);
     res.status(500).json({ error: "Failed to submit claim" });
   }
 });
