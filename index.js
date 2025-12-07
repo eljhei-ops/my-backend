@@ -224,10 +224,26 @@ app.post("/api/login", async (req, res) => {
    CLAIMS MODULE (Admin2)
 --------------------------------------------------- */
 
-// GET ALL CLAIMS
+// GET ALL CLAIMS (with submitted_by username instead of ID)
 app.get('/api/admin2/claims', async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM claims ORDER BY claim_id DESC");
+    const result = await db.query(`
+      SELECT 
+        c.claim_id,
+        c.claim_code,
+        c.claim_amount,
+        c.hospital_name,
+        c.patient_name,
+        c.claim_status,
+        c.claim_date_created,
+        c.claim_date_updated,
+        u.user_name AS submitted_by,
+        c.date_of_claim
+      FROM claims c
+      LEFT JOIN users u ON c.submitted_by = u.id
+      ORDER BY c.claim_id DESC
+    `);
+
     res.json({ claims: result.rows });
   } catch (err) {
     res.status(500).json({ error: err.message });
