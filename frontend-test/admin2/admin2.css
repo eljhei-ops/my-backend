@@ -180,6 +180,7 @@ body {
     cursor: pointer;
     color: white;
     margin-right: 5px;
+    
 }
 
 .small-btn.approve { 
@@ -195,3 +196,18 @@ body {
     color: black; 
 }
 
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* spacing between buttons */
+}
+
+.modal-buttons button {
+    padding: 12px 0;
+    width: 110px;      /* ✅ makes all buttons same width */
+    height: 40px;      /* ✅ same height */
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
