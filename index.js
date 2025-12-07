@@ -374,6 +374,9 @@ app.post("/api/client/submit", requireClient, async (req, res) => {
   const { claim_code, claim_amount, hospital_name, patient_name, date_of_claim } = req.body;
   const submitted_by = req.user.user_name;
 
+console.log("req.user:", req.user);
+console.log("Token received:", req.headers.authorization);
+
   try {
     const result = await db.query(
       `INSERT INTO claims 
