@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="admin2.css">
 </head>
 <body>
+
 <div class="sidebar">
     <h2 class="sidebar-title">Admin Panel</h2>
     <nav>
@@ -36,21 +37,6 @@
         </thead>
         <tbody id="claimsTable"></tbody>
     </table>
-</div>
-
-<div id="actionModal" class="modal">
-    <div class="modal-content">
-        <h2 id="modalTitle">Update Claim</h2>
-
-        <p id="modalMessage"></p>
-
-        <div class="modal-buttons">
-            <button id="approveBtn" class="approve">Approve</button>
-            <button id="denyBtn" class="deny">Deny</button>
-            <button id="resubmitBtn" class="resubmit">Resubmit</button>
-            <button onclick="closeModal()" class="close">Cancel</button>
-        </div>
-    </div>
 </div>
 
 <script src="admin2.js"></script>

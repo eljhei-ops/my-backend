@@ -10,7 +10,6 @@ function requireAdmin() {
     if (!token || type !== "Admin") {
         alert("Unauthorized. Admin Access Only.");
         window.location.href = "/frontend-test/login.html";
-        return;
     }
 }
 
@@ -38,18 +37,6 @@ function logout() {
 }
 
 /* ============================
-   LOAD DASHBOARD COUNTS
-============================ */
-async function loadClaimStats() {
-    const stats = await api(`${BACKEND}/api/admin2/claim-stats`);
-
-    document.getElementById("countPending").innerText = stats.pending;
-    document.getElementById("countApproved").innerText = stats.approved;
-    document.getElementById("countDenied").innerText = stats.denied;
-    document.getElementById("countResubmit").innerText = stats.resubmit;
-}
-
-/* ============================
    LOAD CLAIM TABLE
 ============================ */
 async function loadClaims() {
@@ -67,12 +54,14 @@ async function loadClaims() {
                 <td>${c.hospital_name}</td>
                 <td>${c.patient_name}</td>
                 <td>${new Date(c.date_of_claim).toLocaleDateString()}</td>
-                <td>${c.submitted_by}</td> 
+                <td>${c.submitted_by}</td>
                 <td>${c.claim_status}</td>
                 <td>${new Date(c.claim_date_created).toLocaleString()}</td>
                 <td>${new Date(c.claim_date_updated).toLocaleString()}</td>
                 <td>
-                <button class="small-btn" onclick="openModal(${c.claim_id})"> Manage </button>
+                    <button onclick="updateClaimStatus(${c.claim_id}, 'approve')" class="small-btn approve">Approve</button>
+                    <button onclick="updateClaimStatus(${c.claim_id}, 'deny')" class="small-btn deny">Deny</button>
+                    <button onclick="updateClaimStatus(${c.claim_id}, 'resubmit')" class="small-btn resubmit">Resubmit</button>
                 </td>
             </tr>
         `;
@@ -80,26 +69,10 @@ async function loadClaims() {
 }
 
 /* ============================
-   MODAL LOGIC
+   UPDATE CLAIM STATUS
 ============================ */
-let selectedClaimId = null;
-
-function openModal(id) {
-    selectedClaimId = id;
-    document.getElementById("modalTitle").innerText = `Update Claim #${id}`;
-    document.getElementById("actionModal").style.display = "block";
-}
-
-function closeModal() {
-    document.getElementById("actionModal").style.display = "none";
-    selectedClaimId = null;
-}
-
-
-async function updateClaimStatus(action) {
-    if (!selectedClaimId) return;
-
-    const response = await api(`${BACKEND}/api/admin2/claims/${selectedClaimId}/${action}`, {
+async function updateClaimStatus(id, action) {
+    const response = await api(`${BACKEND}/api/admin2/claims/${id}/${action}`, {
         method: "PUT"
     });
 
@@ -108,46 +81,14 @@ async function updateClaimStatus(action) {
         return;
     }
 
-    alert("Claim updated successfully.");
-    closeModal();
+    alert(`Claim #${id} updated to: ${action}`);
     loadClaims();
 }
 
-window.onload = () => {
-    requireAdmin();
-
-    // dashboard page
-    if (document.getElementById("countPending")) {
-        loadClaimStats();
-    }
-
-    // claims page
-    if (document.getElementById("claimsTable")) {
-        loadClaims();
-    }
-
-    // modal event listeners (only exist on claims page)
-    if (document.getElementById("approveBtn")) {
-        document.getElementById("approveBtn").onclick = () => updateClaimStatus("approve");
-        document.getElementById("denyBtn").onclick = () => updateClaimStatus("deny");
-        document.getElementById("resubmitBtn").onclick = () => updateClaimStatus("resubmit");
-    }
-};
-
-
 /* ============================
-   AUTO LOAD BASED ON PAGE
+   AUTO LOAD
 ============================ */
 window.onload = () => {
     requireAdmin();
-
-    if (document.getElementById("countPending")) {
-        loadClaimStats();
-    }
-
-    if (document.getElementById("claimsTable")) {
-        loadClaims();
-    }
+    loadClaims();
 };
-
-
